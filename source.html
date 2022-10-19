@@ -2,24 +2,53 @@
 <html>
   <head>
     <title>Nim</title>
+
     <link href='source.css' rel='stylesheet'>
   </head>
 
   <body>
     <header>
       <h1 class="title"> NIM </h1>
-      	  
-      <form>
-	<input type="text">
-	<input type="password">
-	<input type="submit">
-      </form>
-      
+
+      <div id="login">
+	<form>
+	  <input type="text">
+	  <input type="password">
+	  <input type="submit">
+	</form>
+      </div>
+
+
+      <div id="boardSize">
+	<h1> Board Size </h1>
+	<form>
+	  <label for="cols">Columns:</label>
+	  <br>
+	  <input id="cols" name="cols" type="number" min="0" max="10">
+	  <br>
+	  
+	  <br>
+	  <label for="rows">Rows:</label>
+	  <br>
+	  <input id="rows" name="rows" type="number" min="0" max="10">
+
+	  <br>
+	  <br>
+	  <input type="button" value="Create" id="button">
+	</form>
+      </div>
+
     </header>
 
     <nav></nav>
 
     <main>
+      <div class="board" id="board">
+
+      </div>
+      
+
+      
       <div class="container">
 	<section class="pilha">
 
@@ -40,6 +69,9 @@
     
     <footer></footer>
     
+    <script src="source.js"> </script>
+
+
   </body>
   
 

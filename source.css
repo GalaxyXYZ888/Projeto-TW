@@ -9,10 +9,10 @@ body {
     text-align: center;
     width: 3em;
     height: auto;
-    margin-top: auto;
-    margin-bottom: auto;
-    margin-left: auto;
-    margin-right: auto;
+    border: 3px solid black;
+    padding: 3px 3px;
+    margin: 0 auto;
+    margin-bottom: 5 px;
 }
 
 .pilha {
@@ -27,4 +27,8 @@ body {
 .container {
     margin-top: 2em;
     margin-bottom: auto;
+}
+
+.logo {
+    
 }
