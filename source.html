@@ -1,79 +1,66 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Nim</title>
 
-    <link href='source.css' rel='stylesheet'>
-  </head>
+<head>
+	<title>Nim</title>
 
-  <body>
-    <header>
-      <h1 class="title"> NIM </h1>
+	<link href='source.css' rel='stylesheet'>
+</head>
 
-      <div id="login">
-	<form>
-	  <input type="text">
-	  <input type="password">
-	  <input type="submit">
-	</form>
-      </div>
+<body>
+	<header>
 
+		<h1 class="title"> <img src="NIMLogo2.png" alt="NIM"> </h1>
 
-      <div id="boardSize">
-	<h1> Board Size </h1>
-	<form>
-	  <label for="cols">Columns:</label>
-	  <br>
-	  <input id="cols" name="cols" type="number" min="0" max="10">
-	  <br>
-	  
-	  <br>
-	  <label for="rows">Rows:</label>
-	  <br>
-	  <input id="rows" name="rows" type="number" min="0" max="10">
-
-	  <br>
-	  <br>
-	  <input type="button" value="Create" id="button">
-	</form>
-      </div>
-
-    </header>
-
-    <nav></nav>
-
-    <main>
-      <div class="board" id="board">
-
-      </div>
-      
-
-      
-      <div class="container">
-	<section class="pilha">
-
-	</section>
-	<section class="pilha">
-
-	</section>
-	<section class="pilha">
-
-	</section>
-	<section class="pilha">
-
-	</section>
-      </div>
-      
-
-    </main>
-    
-    <footer></footer>
-    
-    <script src="source.js"> </script>
+		<div id="login">
+			<form>
+				<input class="login right" type="password">
+				<input class="login right" type="login">
+				<input class="button right" type="submit" value="Login">
+			</form>
+		</div>
 
 
-  </body>
-  
+
+
+		<div id="boardSize">
+			<h1> Board Size </h1>
+			<form>
+				<label for="cols">Columns:</label>
+				<br>
+				<input id="cols" name="cols" type="number" min="0" max="10">
+				<br>
+
+				<br>
+				<label for="rows">Rows:</label>
+				<br>
+				<input id="rows" name="rows" type="number" min="0" max="10">
+
+				<br>
+				<br>
+				<input class="button" type="button" value="Create" id="button">
+			</form>
+		</div>
+	</header>
+
+
+
+
+	<nav></nav>
+
+	<main>
+		<div class="DIVcenter" id="board">
+
+		</div>
+	</main>
+
+	<footer></footer>
+
+	<script src="source.js"> </script>
+
+
+</body>
+
 
 
 
