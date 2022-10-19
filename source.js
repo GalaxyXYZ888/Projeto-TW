@@ -18,23 +18,17 @@ class Table {
 
 	buildTable() {
 		const parent = document.getElementById("board");
-
+		const br = document.createElement("br");
+		parent.append(br);
+		var length = 2 * this.rows;
 		for (let i = 0; i < this.columns; i++) {
+			console.log(length);
 			const col = document.createElement("div");
 			const tab = document.createTextNode("\t");
 			parent.append(col);
 			parent.append(tab);
-			for (let j = 0; j < this.rows; j++) {
-				const nl = document.createTextNode("\n");
-				const ndiv = document.createElement("div");
-				if (j != 0) {
-					col.append(nl);
-				}
-				col.append(ndiv);
-				ndiv.setAttribute("style", "width: 2em; height: 2em; border: 2px solid black;");
-			}
+			col.setAttribute("style", "width: 2em; height: " + length + "em; border: 2px solid black; float: left; margin-right: 1em; margin-left: 1em;");
 		}
-
 
 	}
 
