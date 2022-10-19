@@ -8,10 +8,12 @@ body {
     height: auto;
     margin: auto;
     margin-top: 20px;
+    pointer-events: none;
 }
 
+/* BUTTONS */
 .button,
-.login {
+.not-clicable {
     background-color: rgb(146, 163, 199);
     font-family: 'Source Sans Pro', sans-serif;
     color: rgb(0, 0, 0);
@@ -33,12 +35,6 @@ body {
     line-height: 1.5;
 }
 
-.right {
-    margin-top: 20px;
-    margin-right: 10px;
-    float: right;
-}
-
 .button:hover {
     background-color: rgb(120, 133, 161);
 }
@@ -49,7 +45,54 @@ body {
     transform: translateY(2px);
 }
 
+/* LOGIN */
+#loginB,
+#passwordB,
+#submitB {
+    margin-top: 20px;
+    margin-right: 10px;
+    float: right;
+}
 
+/* GAME CONFIGURATOR */
+#gameconfigurationName {
+    font-size: 35px;
+}
+
+.dificuldade {
+    position: relative;
+    display: inline-block;
+    float: right;
+    margin-top: 25px;
+    margin-right: 1620px;
+}
+
+.whoStarts {
+    position: relative;
+    display: inline-block;
+    margin-top: -33px;
+    margin-right: 1486px;
+    float: right;
+}
+
+.whoStarts:hover {
+    background-color: rgb(120, 133, 161);
+}
+
+#boardSizeName {
+    font-size: 28px;
+}
+
+#colsName,
+#rowsName {
+    font-size: 18px;
+}
+
+.cols_rows {
+    width: 10em;
+    line-height: 1.0;
+    padding: 2px 8px;
+}
 
 .DIVcenter {
     position: absolute;
@@ -61,10 +104,3 @@ body {
     /* resize: both; 
     */
 }
-
-.container {
-    margin-top: 2em;
-    margin-bottom: auto;
-}
-
-.logo {}
