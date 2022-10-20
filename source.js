@@ -1,6 +1,6 @@
 document.getElementById("button").onclick = function () {
-	var cols = document.getElementById("cols").value;
-	var rows = document.getElementById("rows").value;
+	var cols = document.getElementById("colsName").value;
+	var rows = document.getElementById("rowsName").value;
 
 	console.log("Rows:" + rows + " Cols:" + cols);
 
@@ -32,4 +32,27 @@ class Table {
 
 	}
 
-}    
+}
+
+
+function hideDivTabela() {
+
+	const DIV = document.getElementById("DIVtable");
+
+	if (DIV.style.display === "block") {
+		DIV.style.display = "none";
+	} else {
+		DIV.style.display = "block";
+	}
+}
+
+function hideDivRegras() {
+
+	const DIV = document.getElementById("DIVregras");
+
+	if (DIV.style.display === "block") {
+		DIV.style.display = "none";
+	} else {
+		DIV.style.display = "block";
+	}
+}
