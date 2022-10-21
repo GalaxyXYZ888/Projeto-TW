@@ -8,10 +8,12 @@ body {
     height: auto;
     margin: auto;
     margin-top: 20px;
+    pointer-events: none;
 }
 
+/* BUTTONS */
 .button,
-.login {
+.not-clicable {
     background-color: rgb(146, 163, 199);
     font-family: 'Source Sans Pro', sans-serif;
     color: rgb(0, 0, 0);
@@ -33,12 +35,6 @@ body {
     line-height: 1.5;
 }
 
-.right {
-    margin-top: 20px;
-    margin-right: 10px;
-    float: right;
-}
-
 .button:hover {
     background-color: rgb(120, 133, 161);
 }
@@ -49,22 +45,144 @@ body {
     transform: translateY(2px);
 }
 
+/* LOGIN */
+#loginB,
+#passwordB,
+#submitB {
+    margin-top: 20px;
+    margin-right: 10px;
+    float: right;
+}
+
+/* GAME CONFIGURATOR */
+#gameconfigurationName {
+    font-size: 35px;
+}
+
+.dificuldade,
+button:hover {
+    position: relative;
+
+    float: right;
+    margin-top: 25px;
+    margin-right: 1620px;
+}
+
+.dificuldade:hover {
+    background-color: rgb(120, 133, 161);
+}
 
 
+.whoStarts {
+    position: relative;
+
+    margin-top: -33px;
+    margin-right: 1486px;
+    float: right;
+}
+
+.whoStarts:hover {
+    background-color: rgb(120, 133, 161);
+}
+
+#boardSizeName {
+    font-size: 28px;
+}
+
+#colsName,
+#rowsName {
+    font-size: 18px;
+}
+
+.cols_rows {
+    width: 10em;
+    line-height: 1.0;
+    padding: 2px 8px;
+}
+
+/* MEIO */
 .DIVcenter {
-    position: absolute;
+    position: fixed;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
     overflow: auto;
-
     /* resize: both; 
     */
 }
 
-.container {
-    margin-top: 2em;
-    margin-bottom: auto;
+#buttonFF {
+    position: relative;
+    left: 400px;
+    top: 350px;
 }
 
-.logo {}
+
+
+
+
+
+
+
+
+
+/* BAIXO */
+#DIVtable,
+#DIVregras {
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.332);
+    background: rgb(146, 163, 199);
+    padding: 1.5rem;
+    display: none;
+    border-radius: 15px;
+    position: fixed;
+    z-index: 3;
+}
+
+table,
+th,
+td {
+    border: 0.15em solid;
+    font-size: x-large;
+}
+
+th,
+td {
+    padding: 0.2em;
+}
+
+tr:hover {
+    background-color: rgb(120, 133, 161);
+
+}
+
+th {
+    background-color: rgb(120, 133, 161);
+
+}
+
+
+#regras {
+    font-size: x-large;
+    text-align: center;
+    text-justify: auto;
+}
+
+#controls {
+    position: absolute;
+    left: 20px;
+    bottom: 0px;
+}
+
+#buttonResultados {
+    position: absolute;
+    left: 130px;
+    bottom: 19px;
+
+}
+
+#buttonRegras {
+    position: absolute;
+    left: 250px;
+    bottom: 19px;
+
+}

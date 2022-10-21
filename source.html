@@ -2,9 +2,10 @@
 <html>
 
 <head>
-	<title>Nim</title>
-
 	<link href='source.css' rel='stylesheet'>
+	<script src="source.js"></script>
+
+	<title>Nim</title>
 </head>
 
 <body>
@@ -14,49 +15,131 @@
 
 		<div id="login">
 			<form>
-				<input class="login right" type="password">
-				<input class="login right" type="login">
-				<input class="button right" type="submit" value="Login">
+				<input id="passwordB" class="not-clicable right" type="password">
+				<input id="loginB" class="not-clicable right" type="login">
+				<input id="submitB" class="button right" type="submit" value="Login">
 			</form>
 		</div>
 
 
-
-
 		<div id="boardSize">
-			<h1> Board Size </h1>
+			<h1 id="gameconfigurationName">Game Configuration</h1>
+			<h2 id="boardSizeName">Board Size</h2>
 			<form>
-				<label for="cols">Columns:</label>
-				<br>
-				<input id="cols" name="cols" type="number" min="0" max="10">
-				<br>
+
+				<select id="dificuldadeButton" class="not-clicable dificuldade" name="dificuldadeButton">
+					<option value="pl">Fácil</option>
+					<option value="cu">Medio</option>
+					<option value="cu">Difícil</option>
+				</select>
+
+				<select id="whoStartsButton" class="not-clicable whoStarts" name="whoStartsButton">
+					<option value="pl">Player</option>
+					<option value="cu">Computer</option>
+				</select>
+
+
+				<label id="colsName" for="cols">Columns:</label>
+				<input class="not-clicable cols_rows" id="cols" name="cols" type="number" min="0" max="10">
 
 				<br>
-				<label for="rows">Rows:</label>
-				<br>
-				<input id="rows" name="rows" type="number" min="0" max="10">
+				<label id="rowsName" for="rows">Rows:</label>
+				<input class="not-clicable cols_rows" id="rows" name="rows" type="number" min="0" max="10">
 
-				<br>
 				<br>
 				<input class="button" type="button" value="Create" id="button">
+
 			</form>
 		</div>
 	</header>
 
-
-
-
 	<nav></nav>
 
 	<main>
+
+
+
+		<div id="DIVtable" class="DIVcenter">
+			<table id="table">
+				<tr>
+					<th>Ranking</th>
+					<th>Jogador</th>
+					<th>Adversário</th>
+					<th>Resultado</th>
+				</tr>
+				<tr>
+					<td>#1</td>
+					<td>Galaxy</td>
+					<td>IA</td>
+					<td>480</td>
+				</tr>
+				<tr>
+					<td>#2</td>
+					<td>Douglas</td>
+					<td>IA</td>
+					<td>330</td>
+				</tr>
+				<tr>
+					<td>#3</td>
+					<td>Exemplo 3</td>
+					<td>IA</td>
+					<td>290</td>
+				</tr>
+				<tr>
+					<td>#4</td>
+					<td>Exemplo 4</td>
+					<td>IA</td>
+					<td>220</td>
+				</tr>
+				<tr>
+					<td>#5</td>
+					<td>Exemplo 5</td>
+					<td>IA</td>
+					<td>180</td>
+				</tr>
+			</table>
+		</div>
+
+		<div id="DIVregras" class="DIVcenter">
+			<P id="regras">O Nim é um jogo matemático de estratégia em que dois jogadores alternadamente removem objetos
+				(contas, grãos, fosforos) de diferentes pilhas. A cada jogada, o jogador deve remover pelo menos um
+				objeto de um pilha e todos os objetos removidos devem pertencer à mesma pilha. O objetivo do jogo é
+				remover o último objeto.</P>
+		</div>
+
+		<div id="buttonFF">
+			<button class="button">Desistir do jogo</button>
+		</div>
+
 		<div class="DIVcenter" id="board">
+
+
+
 
 		</div>
 	</main>
 
-	<footer></footer>
 
-	<script src="source.js"> </script>
+
+	<div id="controls">
+		<h2>Controls:</h2>
+
+		<div id="buttonResultados">
+			<button class="button" onclick="hideDivTabela()">Resultados</button>
+		</div>
+
+		<div id="buttonRegras">
+			<button class="button" onclick="hideDivRegras()">Regras</button>
+		</div>
+
+
+
+
+	</div>
+
+
+
+
 
 
 </body>
