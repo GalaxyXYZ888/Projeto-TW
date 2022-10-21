@@ -1,5 +1,8 @@
+.page-wrap {}
+
 body {
     background: rgb(255, 186, 96);
+
 }
 
 .title {
@@ -75,7 +78,6 @@ button:hover {
 
 .whoStarts {
     position: relative;
-
     margin-top: -33px;
     margin-right: 1486px;
     float: right;
@@ -109,6 +111,12 @@ button:hover {
     overflow: auto;
     /* resize: both; 
     */
+}
+
+#board {
+    font-size: 25px;
+    width: 600px;
+    height: 600px;
 }
 
 #buttonFF {
@@ -167,22 +175,12 @@ th {
     text-justify: auto;
 }
 
-#controls {
+.footer {
     position: absolute;
     left: 20px;
-    bottom: 0px;
+    bottom: 15px;
 }
 
-#buttonResultados {
-    position: absolute;
-    left: 130px;
-    bottom: 19px;
-
-}
-
-#buttonRegras {
-    position: absolute;
-    left: 250px;
-    bottom: 19px;
-
+.inline {
+    display: inline;
 }
