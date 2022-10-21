@@ -15,9 +15,9 @@ class Table {
 	    this.rows = rows;
 	    this.columns = columns;
 	    this.state = new Array(this.rows*this.columns);
-		for (let i = 0; i < rows; i++) {
-			for (let j = 0; j < columns; j++) {
-				this.state[i*rows + j] = true;
+		for (let i = 0; i < this.columns; i++) {
+			for (let j = 0; j < this.rows; j++) {
+				this.state[i*this.rows + j] = true;
 			}
 		}
 		this.board = new Array(this.columns);
@@ -62,12 +62,49 @@ class Table {
 				circle.setAttribute("id", this.rows*i + j);
 				circle.setAttribute("style", "width: 1.8em; height: 1.9em; border: 1px solid black; border-radius: 50%; margin: 0 auto; background-color: green;");
 				col.append(circle);
-				this.state[i*this.rows+j] = 1;
 				circle.onclick = () => this.play(i*this.rows + j);
 		    }
 		}
 	}
 
+	nextPlay() {
+		let i = this.rows * this.columns;
+		let counter = 0;
+		for (let k = 0; k < i; k++) {
+			if (this.state[k]) {
+				counter = counter + 1;
+			}
+		}
+		let choice = new Array(counter);
+		let w = 0;
+		for (let k = 0; k < i; k++) {
+			if (this.state[k]) {
+				choice[w] = k;
+				w++;
+			}
+		}
+		let j = Math.floor(Math.random()*counter);
+		let pick = choice[j];
+		var circle = document.getElementById(pick);
+		this.state[pick] = false;
+		circle.setAttribute("style", "width: 1.8em; height: 1.9em; border: 1px solid rgb(255 186 96); border-radius: 50%; margin: 0 auto; background-color: rgb(255 186 96); visibility: none");
+		while(pick%this.rows != 0 && pick >=0) {
+			pick = pick-1;
+		    circle = document.getElementById(pick);
+			circle.setAttribute("style", "width: 1.8em; height: 1.9em; border: 1px solid rgb(255 186 96); border-radius: 50%; margin: 0 auto; background-color: rgb(255 186 96); visibility: none");
+			this.state[pick] = false;
+		}
+
+		var isFinished = true;
+		for (let a = 0; a < this.columns; a++) {
+			for (let b = 0; b < this.rows; b++) {
+				if (this.state[a* this.rows + b]) {
+					isFinished=false;
+				}
+			}
+		}
+		if (isFinished) this.endGame();
+	}
 
     play(pos) {
 		console.log(pos);
@@ -80,6 +117,7 @@ class Table {
 			circle.setAttribute("style", "width: 1.8em; height: 1.9em; border: 1px solid rgb(255 186 96); border-radius: 50%; margin: 0 auto; background-color: rgb(255 186 96); visibility: none");
 			this.state[pos] = false;
 		}
+		this.nextPlay();
 /*		for (let i = 0; i < this.rows; i++) {
 			for (let j = 0; j < this.cols; j++) {
 				if (this.state[i*this.rows + j]) {
@@ -88,6 +126,16 @@ class Table {
 			}
 		}
 		this.endGame();*/
+
+		var isFinished = true;
+		for (let a = 0; a < this.columns; a++) {
+			for (let b = 0; b < this.rows; b++) {
+				if (this.state[a* this.rows + b]) {
+					isFinished=false;
+				}
+			}
+		}
+		if (isFinished) this.endGame();
     }
 
 	endGame() {
