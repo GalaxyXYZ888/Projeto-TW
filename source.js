@@ -1,6 +1,6 @@
 document.getElementById("button").onclick = function () {
-	var cols = document.getElementById("colsName").value;
-	var rows = document.getElementById("rowsName").value;
+	var cols = document.getElementById("cols").value;
+	var rows = document.getElementById("rows").value;
 
 	console.log("Rows:" + rows + " Cols:" + cols);
 
