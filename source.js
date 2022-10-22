@@ -4,11 +4,28 @@ document.getElementById("button").onclick = function () {
 
 	console.log("Rows:" + rows + " Cols:" + cols);
 
+	var boardCont = document.getElementById("boardContainer");
+	if (boardCont.hasChildNodes()) {
+		boardCont.firstChild.remove();
+	}
+
+	var b = document.createElement("div");
+	b.setAttribute("class", "DIVcenter");
+	b.setAttribute("id", "board");
+	boardCont.appendChild(b);
+
 	let t = new Table(rows, cols);
 	console.log("Table: Rows:" + t.rows + " Cols:" + t.columns);
 	t.buildTable();
 }
 
+document.getElementById("quit").onclick = function () {
+	var bCont = document.getElementById("boardContainer");
+	if (bCont.hasChildNodes()) {
+		bCont.firstChild.remove();
+	}
+
+}
 
 class Table {
 	constructor(rows, columns) {
@@ -22,29 +39,10 @@ class Table {
 		}
 		this.board = new Array(this.columns);
 		for (let i = 0; i < this.columns; i++) {
-			board[i] = new Array(4);
+			this.board[i] = new Array(4);
 		}
 	}
-
-/*
-    buildTable() {
-	const table = document.createElement("table");
-	const parent = document.getElementById("board");
-	parent.append(table);
-
-	for (let i = 0; i < this.rows; i++) {
-	    var tr = document.createElement("tr");
-	    table.append(tr);
-	    for (let j = 0; j < this.cols; j++) {
-		var td = document.createElement("td");
-		tr.append(td);
-		var X = document.createTextNode("X");
-		td.append(X);
-	    }
-	}
-    }
-
-*/    
+   
 	buildTable() {
 		const parent = document.getElementById("board");
 		const br = document.createElement("br");
@@ -103,7 +101,7 @@ class Table {
 				}
 			}
 		}
-		if (isFinished) this.endGame();
+		if (isFinished) this.endGame(false);
 	}
 
     play(pos) {
@@ -117,15 +115,6 @@ class Table {
 			circle.setAttribute("style", "width: 1.8em; height: 1.9em; border: 1px solid rgb(255 186 96); border-radius: 50%; margin: 0 auto; background-color: rgb(255 186 96); visibility: none");
 			this.state[pos] = false;
 		}
-		this.nextPlay();
-/*		for (let i = 0; i < this.rows; i++) {
-			for (let j = 0; j < this.cols; j++) {
-				if (this.state[i*this.rows + j]) {
-					return;
-				}
-			}
-		}
-		this.endGame();*/
 
 		var isFinished = true;
 		for (let a = 0; a < this.columns; a++) {
@@ -135,17 +124,32 @@ class Table {
 				}
 			}
 		}
-		if (isFinished) this.endGame();
+		if (isFinished) {
+			this.endGame(true);
+		} else {
+			this.nextPlay();
+		}
     }
 
-	endGame() {
+	endGame(playerWon) {
 		var board = document.getElementById("board");
-		var body = document.getElementById("body");
+		var body = document.getElementById("boardContainer");
 		board.remove();
-		const div = document.createElement("div");
-		const txt = document.createTextNode("The game has ended!");
+		if (playerWon) {
+			const chat = document.createElement("div");
+			const txt = document.createTextNode("You have won!");
+			chat.appendChild(txt);
+			body.appendChild(chat);
+		} else {
+			const chat = document.createElement("div");
+			const txt = document.createTextNode("You have lost!");
+			chat.appendChild(txt);
+			body.appendChild(chat);
+		}
 
 	}
+
+
 /*
 	decompose(col, num) {
 		let i = 
