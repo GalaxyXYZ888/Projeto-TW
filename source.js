@@ -1,15 +1,83 @@
+var nick = "";
+var pass = "";
+
+
+document.getElementById("Entrar").onclick = function () {
+	console.log("button clicked\n");
+	nick = document.getElementById("loginB").value;
+	pass = document.getElementById("passwordB").value;
+
+	if (nick == "") return;
+	if (pass == "") return;
+
+	console.log("it worked");
+
+	if(!XMLHttpRequest) { console.log('XHR not supported'); return; }
+
+	const xhr = new XMLHttpRequest();
+	xhr.open('POST', 'http://twserver.alunos.dcc.fc.up.pt:8008/register', true);
+	xhr.onreadystatechange = function() {
+		if (xhr.readyState < 4) return;
+		if (xhr.status == 200)  {
+			console.log(xhr.responseText);
+		}
+		if (xhr.status == 400) {
+			console.log("User already registered with a different password.");
+		}
+	}
+
+	xhr.send(JSON.stringify({ 'nick': nick, 'password': pass}));
+
+	DIVLOGIN.style.display = "none";
+
+}
+
+/*
+document.getElementById("playVsPlayer").onclick = function () {
+
+
+	var name = document.getElementById("loginB").value;
+	var pass = document.getElementById("passwordB").value;
+	var size = document.getElementById("cols").value;
+	let obj = { 'group': 12, 'nick': name, 'password': pass, 'size': size };
+
+	if(!XMLHttpRequest) { console.log('XHR not supported'); return; }
+
+	const xhr = new XMLHttpRequest();
+	xhr.open('POST', 'http://twserver.alunos.dcc.fc.up.pt:8008/join', true);
+	xhr.onreadystatechange = function() {
+		if (xhr.readyState < 4) return;
+		if (xhr.status == 200)  {
+			console.log(xhr.responseText);
+		}
+		if (xhr.status == 400) {
+			console.log("User already registered with a different password.");
+		}
+	}
+
+	xhr.send(JSON.stringify(obj));
+
+
+}
+*/
+
 document.getElementById("createbutton").onclick = function () {
+	
 	var cols = document.getElementById("cols").value;
-	var rows = document.getElementById("rows").value;
-	var dif = document.getElementById("dificuldadeButton").value;
-	console.log("dif: " + dif);
+	var dif = document.getElementById("dificuldadeButton").value;     // difficulty
+
+
+	// Setting the difficulty based on the form value received
 	let difficulty = 0;
 	if (dif == "pl") {
 		difficulty = 1;
 	} else {
 		difficulty = 2;
 	}
-	var start = document.getElementById("whoStartsButton").value;
+
+
+	// Deciding who starts: if startP is true, then the player starts, otherwise the computer starts
+	var start = document.getElementById("whoStartsButton").value; 
 	let startP = false;
 	if (start == "pl") {
 		startP = true;
@@ -17,29 +85,33 @@ document.getElementById("createbutton").onclick = function () {
 		startP = false;
 	}
 
-	console.log("Rows:" + rows + " Cols:" + cols);
 
+	// Check the boardContainer element, if it has a child, then a board already exists and we will delete it
 	var boardCont = document.getElementById("boardContainer");
 	if (boardCont.hasChildNodes()) {
 		boardCont.firstChild.remove();
 	}
 
-	var b = document.createElement("div");
-	
-	b.setAttribute("id", "board");
-	boardCont.appendChild(b);
 
-	if (cols > 10) {
-		cols = 10;
-	} if (rows > 10) {
-		rows = 10;
-	}
+	// Now that there is no board, we will create a new one and append it to boardCont
+	var newBoard = document.createElement("div");
+	newBoard.setAttribute("class", "DIVcenter");
+	newBoard.setAttribute("id", "board");
+	boardCont.appendChild(newBoard);
 
-	let t = new Table(rows, cols, difficulty, startP);
-	console.log("Table: Rows:" + t.rows + " Cols:" + t.columns);
+
+	// Limiting the columns and rows of the board by 10
+	if (cols > 10) { cols = 10; }
+
+
+	// Create a new Table class, which will create the desired table in the "newBoard" div class
+	let t = new Table(cols, difficulty, startP);
 	t.buildTable();
+
 }
 
+
+// If a player clicks on the "quit" button, then the div class containing the board gets removed
 document.getElementById("quit").onclick = function () {
 	var bCont = document.getElementById("boardContainer");
 	if (bCont.hasChildNodes()) {
@@ -48,64 +120,130 @@ document.getElementById("quit").onclick = function () {
 
 }
 
+
 class Table {
-	constructor(rows, columns, dif, firstPlayer) {
-		this.posAI = 0;
-		this.rows = rows;
-		this.firstPlayer = firstPlayer;
-		this.columns = columns;
-		this.state = new Array(this.rows * this.columns);
+	constructor(columns, dif, firstPlayer) {
+
+	    this.columns = columns;		
+	    this.firstPlayer = firstPlayer;                      // firstPlayer, if true it's the player, if false it's the computer
+		this.dif = dif;                                      // Lvl of difficulty, if =1 it's the easy verion, if =2 it's the hard version
+
+		this.posAI = 0;										 // This variable will be the position the computer plays (if lvl of diff = 2)
+
+		this.state = new Array(this.columns*this.columns);   // state array contains boolean values, if true then there exists an object in that position
+
 		for (let i = 0; i < this.columns; i++) {
-			for (let j = 0; j < this.rows; j++) {
-				this.state[i * this.rows + j] = true;
+			for (let j = 0; j < this.columns; j++) {
+				if (j < this.columns -1 - i) { this.state[i* this.columns + j] = false; }
+				else { this.state[i*this.columns + j] = true; }
 			}
 		}
-		this.board = new Array(this.columns);
-		for (let i = 0; i < this.columns; i++) {
-			this.board[i] = new Array(4);
-		}
-		this.dif = dif;
-	}
 
+		// Create an array that contains the binary decomposition of the ammount of objects a column contains
+		this.board = new Array(this.columns);
+
+		// initializing the array
+		for (let i = 0; i < this.columns; i++) {
+			this.board[i] = new Array(4);                 // it only needs 4 elements, because there is a maximum of 10 objects per column, 2^(4) = 16
+		}
+
+
+	}
+   
 	buildTable() {
-		const parent = document.getElementById("board");
+
+		const parent = document.getElementById("board");  // div that will contain the board
+
 		const br = document.createElement("br");
 		parent.append(br);
-		var length = 2 * this.rows;
+
+		// length will be the length of each column
+		var length = 50 * this.columns + 5 * this.columns + 5;
+		console.log(length+ " " + this.columns);
+
+	    // for loop to create the elements of the table
 		for (let i = 0; i < this.columns; i++) {
-			console.log(length);
+
 			const col = document.createElement("div");
-			const tab = document.createTextNode("\t");
+		    const tab = document.createTextNode("\t");
+
 			parent.append(col);
-			parent.append(tab);
-			col.setAttribute("style", "width: 2em; height: " + length + "em; border: 2px solid black; float: left; margin-right: 1em; margin-left: 1em;");
-			for (let j = 0; j < this.rows; j++) {
-				var circle = document.createElement("div");
-				circle.setAttribute("id", this.rows * i + j);
-				circle.setAttribute("style", "width: 1.8em; height: 1.9em; border: 1px solid black; border-radius: 50%; margin: 0 auto; background-color: green;");
-				col.append(circle);
-				circle.onclick = () => this.play(i * this.rows + j);
-			}
+		    parent.append(tab);
+
+			// Changing the style of the column to be visible and resemble a container
+			col.setAttribute("style", "width: 60px; height: " + length + "px; border-width: 3px; border-style: dotted; float: left; margin-right: 20px; margin-left: 20px;");
+
+			// for each column, we add the objects
+			for (let j = 0; j < this.columns; j++) {
+
+				if (j >= this.columns - 1 - i) {
+
+
+					// variable for the element, which will be a circle
+					var circle = document.createElement("div"); 
+
+					circle.setAttribute("id", this.columns*i + j);
+					circle.setAttribute("style", "width: 50px; height: 50px; border-width: 0px; border-radius: 50%; margin: 5px; background-color: green;");
+
+					col.append(circle);
+
+					// Creating an onclick event, when the circle is clicked it will call the play fucntion
+					circle.onclick = () => this.play(i*this.columns + j); 
+
+				} else {
+
+					var empty = document.createElement("div");
+
+					empty.setAttribute("id", this.columns*i + j);
+					empty.setAttribute("style", "width: 50px; height: 50px; border-width: 0px; border-radius: 50%; margin: 5px; background-color: rgb(255 186 96); visibility: none");
+
+					col.append(empty);
+
+				}
+		    }
 		}
+
+		
+		// Initially we do the binary decomposition for each column, using the decompose function
 		for (let i = 0; i < this.columns; i++) {
-			this.decompose(i, this.rows);
+			this.decompose(i, i+1);
 		}
+
+
+		// In case the first move is made by the computer
 		if (!this.firstPlayer) {
 			this.bestChoice();
 			this.nextPlay(this.posAI);
 		}
 	}
 
+
+	// plays the next move of the computer
 	nextPlay(pos) {
+
+
+		// pick is the variable that will contain the chosen postion to play
 		let pick = 0;
+
+
+		// if the difficulty is easy, then the computer choses a random position to play
 		if (this.dif == 1) {
-			let i = this.rows * this.columns;
+
+			// total ammount of positions
+			let i = this.columns * this.columns; 
+
+			// counter will have the ammount of objects still in the table
 			let counter = 0;
+
+			// for loop to count the objects still in the table
 			for (let k = 0; k < i; k++) {
 				if (this.state[k]) {
 					counter = counter + 1;
 				}
 			}
+
+
+			// we create an array with all the possible choices
 			let choice = new Array(counter);
 			let w = 0;
 			for (let k = 0; k < i; k++) {
@@ -114,76 +252,114 @@ class Table {
 					w++;
 				}
 			}
-			let j = Math.floor(Math.random() * counter);
+
+
+			// we create a random number from 0 to counter(the number of possible choices) and we pick that number from the array
+			let j = Math.floor(Math.random()*counter);
 			pick = choice[j];
 		}
+
+
+		// if the difficulty is hard, then the computer will chose an optimum move, which is recorded on the pos variable
 		if (this.dif == 2) {
 			pick = pos;
 		}
 
 		var circle = document.getElementById(pick);
+
+		// turns the state of that position to false
 		this.state[pick] = false;
-		circle.setAttribute("style", "width: 1.8em; height: 1.9em; border: 1px solid rgb(255 186 96); border-radius: 50%; margin: 0 auto; background-color: rgb(255 186 96); visibility: none");
-		while (pick % this.rows != 0 && pick >= 0) {
-			pick = pick - 1;
-			circle = document.getElementById(pick);
-			circle.setAttribute("style", "width: 1.8em; height: 1.9em; border: 1px solid rgb(255 186 96); border-radius: 50%; margin: 0 auto; background-color: rgb(255 186 96); visibility: none");
+		
+		// removing the circle by turning it invisible
+		circle.setAttribute("style", "width: 50px; height: 50px; border-width: 0px; border-radius: 50%; margin: 5px; background-color: rgb(255 186 96); visibility: none");
+		
+		// removes all the objects above that position in that column
+		while(pick%this.columns != 0 && pick >=0) {
+			pick = pick-1;
+		    circle = document.getElementById(pick);
+			circle.setAttribute("style", "width: 50px; height: 50px; border-width: 0px; border-radius: 50%; margin: 5px; background-color: rgb(255 186 96); visibility: none");
 			this.state[pick] = false;
 		}
 
+
+		// Checks if the game is finished (if the state array is false for all positions) and records it in the isFinished variable
 		var isFinished = true;
 		for (let a = 0; a < this.columns; a++) {
-			for (let b = 0; b < this.rows; b++) {
-				if (this.state[a * this.rows + b]) {
-					isFinished = false;
+			for (let b = 0; b < this.columns; b++) {
+				if (this.state[a* this.columns + b]) {
+					isFinished=false;
 				}
 			}
 		}
+
+
+		// if the game is finished, calls the endGame function with the value false because the player lost
 		if (isFinished) this.endGame(false);
 	}
 
+
+
 	play(pos) {
-		console.log(pos);
+
+
+		// erasing the circle that was clicked on by the player, by making it invisible
 		var circle = document.getElementById(pos);
 		this.state[pos] = false;
-		circle.setAttribute("style", "width: 1.8em; height: 1.9em; border: 1px solid rgb(255 186 96); border-radius: 50%; margin: 0 auto; background-color: rgb(255 186 96); visibility: none");
-		while (pos % this.rows != 0 && pos >= 0) {
-			pos = pos - 1;
-			circle = document.getElementById(pos);
-			circle.setAttribute("style", "width: 1.8em; height: 1.9em; border: 1px solid rgb(255 186 96); border-radius: 50%; margin: 0 auto; background-color: rgb(255 186 96); visibility: none");
+		circle.setAttribute("style", "width: 50px; height: 50px; border-width: 0px; border-radius: 50%; margin: 5px; background-color: rgb(255 186 96); visibility: none");
+
+		// erasing all of the circles above the position given, in the same column
+		while(pos%this.columns != 0 && pos >=0) {
+			pos = pos-1;
+		    circle = document.getElementById(pos);
+			circle.setAttribute("style", "width: 50px; height: 50px; border-width: 0px; border-radius: 50%; margin: 5px; background-color: rgb(255 186 96); visibility: none");
 			this.state[pos] = false;
 		}
 
+
+		// checking if the game has finished, and recording the result in the isFinished variable
 		var isFinished = true;
 		for (let a = 0; a < this.columns; a++) {
-			for (let b = 0; b < this.rows; b++) {
-				if (this.state[a * this.rows + b]) {
-					isFinished = false;
+			for (let b = 0; b < this.columns; b++) {
+				if (this.state[a* this.columns + b]) {
+					isFinished=false;
 				}
 			}
 		}
+
+		// if the game is finished, call the endGame function with the value true because the player won
 		if (isFinished) {
 			this.endGame(true);
 		} else {
-			let intcounter = 0;
+
+			// for loop to count how many objects a column has
+			let objcounter = 0;
 			for (let c = 0; c < this.columns; c++) {
-				intcounter = 0;
-				for (let d = 0; d < this.rows; d++) {
-					if (this.state[c * this.rows + d]) {
-						intcounter = intcounter + 1;
+				objcounter = 0;
+				for (let r = 0; r < this.columns; r++) {
+					if (this.state[c*this.columns + r]) {
+						objcounter=objcounter+1;
 					}
 				}
-				this.decompose(c, intcounter);
+				// updating the table containing the binary decomposition of each row
+				this.decompose(c, objcounter);
 			}
+
+			// functions to decide the best position to play and making the computer play in that position (if diff lvl = 2)
 			this.bestChoice();
 			this.nextPlay(this.posAI);
 		}
-	}
+    }
+
 
 	endGame(playerWon) {
+
+
+		// removing the div containing the board
 		var board = document.getElementById("board");
 		var body = document.getElementById("boardContainer");
 		board.remove();
+
+		// if the player won, create a message saying "You have won!", other wise "You have lost!"
 		if (playerWon) {
 			const chat = document.createElement("div");
 			const txt = document.createTextNode("You have won!");
@@ -199,22 +375,28 @@ class Table {
 	}
 
 
+	// Function to do the binary deomposition of a column col with a number num of objects
 	decompose(col, num) {
+
+		// Since the maximum number of objects in a column is 10, then we only need 4 bits, so we start at number 3
 		for (let i = 3; i >= 0; i--) {
 			if (num - Math.pow(2, i) >= 0) {
 				this.board[col][i] = 1;
-				num = num - Math.pow(2, i);
+				num = num - Math.pow(2, i);		
 			} else {
 				this.board[col][i] = 0;
 			}
 		}
 	}
 
+
 	bestChoice() {
 		let col = 0;
 		let quantity = 0;
 		let extra = 0;
 		let unbalanced = false;
+
+		// for loop to find the first unbalanced column. If there is none then the unbalanced variable will be false
 		for (let i = 0; i < this.columns; i++) {
 			extra = 0;
 			if (this.board[i][0]) {
@@ -236,12 +418,17 @@ class Table {
 				break;
 			}
 		}
+
+
+		// if unbalanced, then the computer will chose the option to balance the column
 		if (unbalanced) {
 			let total = extra + quantity;
-			this.posAI = col * this.rows + (this.rows - total) + quantity - 1;
+			this.posAI = col * this.columns + (this.columns-total) + quantity - 1;
 
 		} else {
-			let i = this.rows * this.columns;
+
+			//if balanced, then the computer choses a random play
+			let i = this.columns * this.columns;
 			let counter = 0;
 			for (let k = 0; k < i; k++) {
 				if (this.state[k]) {
@@ -256,15 +443,11 @@ class Table {
 					w++;
 				}
 			}
-			let j = Math.floor(Math.random() * counter);
+			let j = Math.floor(Math.random()*counter);
 			this.posAI = choice[j];
 		}
 	}
-
-
 }
-
-/* JANELAS ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 
 const DIVTABLE = document.getElementById("DIVtable");
 const DIVREGRAS = document.getElementById("DIVregras");
@@ -281,10 +464,6 @@ function SummonLogin() {
 	BUTTONLOGIN.style.display ="none";
 }
 
-function CloseLogin() {
-
-	DIVLOGIN.style.display = "none";
-}
 
 function hideDivTabela() {
 
