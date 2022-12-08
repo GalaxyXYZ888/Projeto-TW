@@ -1,6 +1,5 @@
 body {
     background: rgb(255, 186, 96);
-   
 }
 
 .container {
@@ -21,8 +20,10 @@ body {
 }
 
 .container div {
+    /*
     padding: 10px;
     border: 1px solid black;
+    */
 }
 
 .header {
@@ -57,10 +58,8 @@ body {
 
 .title {
     text-align: center;
-   
     margin: auto;
     pointer-events: none;
-  
 }
 
 /* BUTTONS */
@@ -93,22 +92,81 @@ body {
     background-color: rgb(120, 133, 161);
 }
 
-.button:active {
+.button:active,
+.Entrar:active {
     background-color: rgb(120, 133, 161);
     box-shadow: 0 3px rgba(0, 0, 0, 0.332);
     transform: translateY(2px);
 }
 
-/* LOGIN */
-#loginB, #passwordB, #submitB {
+/* LOGIN ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
+.login {
+    display: none;
+    flex-direction: column;
+    align-items: center;
     
-    margin-top: 20px;
-    margin-right: 10px;
-    float: right;
-    
+    background-color: rgb(146, 163, 199);
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.332);
+    font-family: 'Source Sans Pro', sans-serif;
+    overflow: hidden;
+    width: 355px;
+    height: 230px;
+    padding: 35px;
+    border-radius: 15px;
+    z-index: 4;
 }
 
-/* GAME CONFIGURATOR */
+.area-login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.login input {
+    margin-top: 10px;
+    background-color: rgb(120, 133, 161);
+    height: 45px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    color: #000000;
+    padding-left: 10px;
+}
+
+.login img {
+    width: 150px;
+    height: auto;
+    pointer-events: none;
+}
+
+.input::placeholder {
+    color: #000000;
+    font-size: 14px;
+}
+
+form [id="Entrar"] {
+    display: block;
+    background: rgb(255, 186, 96);
+    font-size: 20px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.332);
+}
+
+
+.Entrar:hover {
+    background-color: rgb(222, 162, 83);
+}
+
+/* GAME CONFIGURATOR ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 #gameconfigurationName {
     font-size: 35px;
 }
@@ -116,13 +174,6 @@ body {
 #boardsize {
     grid-row: 2 / 4;
     grid-column: 1 / 2;
-}
-
-#boardContainer {
-    display: grid;
-
-    grid-row: 1 / 4;
-    grid-column: 1 / 3;
 }
 
 .dificuldade {
@@ -161,6 +212,13 @@ body {
     */
 }
 
+#boardContainer {
+    display: grid;
+
+    grid-row: 1 / 4;
+    grid-column: 1 / 3;
+}
+
 /* MEIO */
 .DIVcenter {
     position: fixed;
@@ -188,7 +246,7 @@ body {
 }
 
 
-/* BAIXO */
+/* BAIXO ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 #DIVtable,
 #DIVregras {
     box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.332);
@@ -232,30 +290,3 @@ th {
 .inline {
     display: inline;
 }
-
-/*
-<div id="login">
-				<form>
-					<input id="passwordB" class="not-clicable right" type="password">
-					<input id="loginB" class="not-clicable right" type="text">
-					<input id="submitB" class="button" type="submit" value="Login">
-				</form>
-			</div>
-*/
-
-/*
-<section class="area-login">
-				<div class="login">
-					<div>
-						<img src="">
-					</div>
-
-					<form method="POST">
-						<input type="text" name="nome" placeholder="nome de usuario" autofocus>
-						<input type="password" name="pass" placeholder="password">
-						<input type="button" value="entrar">
-					</form>
-					<p>Ainda não tem uma conta?<a> </a> </p>
-				</div>
-			</section>
-*/

@@ -15,14 +15,22 @@
         <div class="header">
 
 			<h1 class="title"> <img src="NIMLogo2.png" alt="NIM"> </h1>
+
+			<button id="buttonLogin" class="button" onclick="SummonLogin()">Login</button>
 			
-			<div id="login">
-				<form>
-					<input id="passwordB" class="not-clicable right" type="password">
-					<input id="loginB" class="not-clicable right" type="text">
-					<input id="submitB" class="button" type="submit" value="Login">
-				</form>
-			</div>
+			<section class="area-login">
+				<div id="DIVlogin" class="login DIVcenter">
+					<div>
+						<img src="NIMLogo2.png">
+					</div>
+
+					<form method="POST">
+						<input type="text" name="nome" placeholder="nome de usuario" autofocus>
+						<input type="password" name="pass" placeholder="password">
+						<input id="Entrar" class="Entrar" type="button" value="entrar" onclick="CloseLogin()">
+					</form>
+				</div>
+			</section>
 		</div>
 
         <div class="content-large">
@@ -34,7 +42,7 @@
 				<form>
 					<select id="dificuldadeButton" class="not-clicable dificuldade" name="dificuldadeButton">
 						<option value="pl">Fácil</option>
-						<option value="cu">Medio</option>
+						<option value="cu">Médio</option>
 						<option value="cu">Difícil</option>
 					</select>
 	

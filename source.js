@@ -264,14 +264,40 @@ class Table {
 
 }
 
+/* JANELAS ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
+
 const DIVTABLE = document.getElementById("DIVtable");
 const DIVREGRAS = document.getElementById("DIVregras");
+const DIVLOGIN = document.getElementById("DIVlogin");
+
+function SummonLogin() {
+
+	DIVTABLE.style.display ="none";
+	DIVREGRAS.style.display = "none";
+	DIVLOGIN.style.display = "flex";
+
+	const BUTTONLOGIN = document.getElementById("buttonLogin");
+
+	BUTTONLOGIN.style.display ="none";
+}
+
+function CloseLogin() {
+
+	DIVLOGIN.style.display = "none";
+}
 
 function hideDivTabela() {
 
+	if (DIVLOGIN.style.display === "flex") {
+
+		return;
+	}
+
 	if (DIVTABLE.style.display === "block") {
+
 		DIVTABLE.style.display = "none";
 	} else {
+
 		DIVREGRAS.style.display ="none";
 		DIVTABLE.style.display = "block";
 	}
@@ -279,9 +305,16 @@ function hideDivTabela() {
 
 function hideDivRegras() {
 
+	if (DIVLOGIN.style.display === "flex") {
+
+		return;
+	}
+
 	if (DIVREGRAS.style.display === "block") {
+
 		DIVREGRAS.style.display = "none";
 	} else {
+
 		DIVTABLE.style.display = "none";
 		DIVREGRAS.style.display = "block";
 	}
