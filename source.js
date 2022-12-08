@@ -25,7 +25,7 @@ document.getElementById("createbutton").onclick = function () {
 	}
 
 	var b = document.createElement("div");
-	b.setAttribute("class", "DIVcenter");
+	
 	b.setAttribute("id", "board");
 	boardCont.appendChild(b);
 
@@ -264,25 +264,25 @@ class Table {
 
 }
 
+const DIVTABLE = document.getElementById("DIVtable");
+const DIVREGRAS = document.getElementById("DIVregras");
 
 function hideDivTabela() {
 
-	const DIV = document.getElementById("DIVtable");
-
-	if (DIV.style.display === "block") {
-		DIV.style.display = "none";
+	if (DIVTABLE.style.display === "block") {
+		DIVTABLE.style.display = "none";
 	} else {
-		DIV.style.display = "block";
+		DIVREGRAS.style.display ="none";
+		DIVTABLE.style.display = "block";
 	}
 }
 
 function hideDivRegras() {
 
-	const DIV = document.getElementById("DIVregras");
-
-	if (DIV.style.display === "block") {
-		DIV.style.display = "none";
+	if (DIVREGRAS.style.display === "block") {
+		DIVREGRAS.style.display = "none";
 	} else {
-		DIV.style.display = "block";
+		DIVTABLE.style.display = "none";
+		DIVREGRAS.style.display = "block";
 	}
 }
