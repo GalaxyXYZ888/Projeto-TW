@@ -1,7 +1,16 @@
+var nick = "";
+var pass = "";
+
+
 document.getElementById("submitB").onclick = function () {
-	console.log("button clicked");
-	var name = document.getElementById("loginB").value;
-	var pass = document.getElementById("passwordB").value;
+	console.log("button clicked\n");
+	nick = document.getElementById("loginB").value;
+	pass = document.getElementById("passwordB").value;
+
+	if (nick == "") return;
+	if (pass == "") return;
+
+	console.log("it worked");
 
 	if(!XMLHttpRequest) { console.log('XHR not supported'); return; }
 
@@ -12,16 +21,47 @@ document.getElementById("submitB").onclick = function () {
 		if (xhr.status == 200)  {
 			console.log(xhr.responseText);
 		}
+		if (xhr.status == 400) {
+			console.log("User already registered with a different password.");
+		}
 	}
 
-	xhr.send(JSON.stringify({ 'nick': name, 'password': pass}));
+	xhr.send(JSON.stringify({ 'nick': nick, 'password': pass}));
 
 }
 
-document.getElementById("button").onclick = function () {
-	console.log("ola");
+/*
+document.getElementById("playVsPlayer").onclick = function () {
+
+
+	var name = document.getElementById("loginB").value;
+	var pass = document.getElementById("passwordB").value;
+	var size = document.getElementById("cols").value;
+	let obj = { 'group': 12, 'nick': name, 'password': pass, 'size': size };
+
+	if(!XMLHttpRequest) { console.log('XHR not supported'); return; }
+
+	const xhr = new XMLHttpRequest();
+	xhr.open('POST', 'http://twserver.alunos.dcc.fc.up.pt:8008/join', true);
+	xhr.onreadystatechange = function() {
+		if (xhr.readyState < 4) return;
+		if (xhr.status == 200)  {
+			console.log(xhr.responseText);
+		}
+		if (xhr.status == 400) {
+			console.log("User already registered with a different password.");
+		}
+	}
+
+	xhr.send(JSON.stringify(obj));
+
+
+}
+*/
+
+document.getElementById("createbutton").onclick = function () {
+	
 	var cols = document.getElementById("cols").value;
-	var rows = document.getElementById("rows").value;
 	var dif = document.getElementById("dificuldadeButton").value;     // difficulty
 
 
@@ -59,15 +99,11 @@ document.getElementById("button").onclick = function () {
 
 
 	// Limiting the columns and rows of the board by 10
-	if (cols > 10) {
-		cols = 10;
-	} if (rows > 10) {
-		rows = 10;
-	}
+	if (cols > 10) { cols = 10; }
 
 
 	// Create a new Table class, which will create the desired table in the "newBoard" div class
-	let t = new Table(rows, cols, difficulty, startP);
+	let t = new Table(cols, difficulty, startP);
 	t.buildTable();
 
 }
@@ -84,20 +120,20 @@ document.getElementById("quit").onclick = function () {
 
 
 class Table {
-	constructor(rows, columns, dif, firstPlayer) {
+	constructor(columns, dif, firstPlayer) {
 
 	    this.columns = columns;		
-	    this.rows = rows;
-		this.firstPlayer = firstPlayer;                      // firstPlayer, if true it's the player, if false it's the computer
+	    this.firstPlayer = firstPlayer;                      // firstPlayer, if true it's the player, if false it's the computer
 		this.dif = dif;                                      // Lvl of difficulty, if =1 it's the easy verion, if =2 it's the hard version
 
 		this.posAI = 0;										 // This variable will be the position the computer plays (if lvl of diff = 2)
 
-		this.state = new Array(this.rows*this.columns);      // state array contains boolean values, if true then there exists an object in that position
+		this.state = new Array(this.columns*this.columns);   // state array contains boolean values, if true then there exists an object in that position
 
 		for (let i = 0; i < this.columns; i++) {
-			for (let j = 0; j < this.rows; j++) {
-				this.state[i*this.rows + j] = true;
+			for (let j = 0; j < this.columns; j++) {
+				if (j < this.columns -1 - i) { this.state[i* this.columns + j] = false; }
+				else { this.state[i*this.columns + j] = true; }
 			}
 		}
 
@@ -120,7 +156,8 @@ class Table {
 		parent.append(br);
 
 		// length will be the length of each column
-		var length = 2 * this.rows;
+		var length = 50 * this.columns + 5 * this.columns + 5;
+		console.log(length+ " " + this.columns);
 
 	    // for loop to create the elements of the table
 		for (let i = 0; i < this.columns; i++) {
@@ -132,28 +169,42 @@ class Table {
 		    parent.append(tab);
 
 			// Changing the style of the column to be visible and resemble a container
-			col.setAttribute("style", "width: 2em; height: " + length + "em; border: 2px solid black; float: left; margin-right: 1em; margin-left: 1em;");
+			col.setAttribute("style", "width: 60px; height: " + length + "px; border-width: 3px; border-style: dotted; float: left; margin-right: 20px; margin-left: 20px;");
 
 			// for each column, we add the objects
-			for (let j = 0; j < this.rows; j++) {
+			for (let j = 0; j < this.columns; j++) {
 
-				// variable for the element, which will be a circle
-				var circle = document.createElement("div"); 
+				if (j >= this.columns - 1 - i) {
 
-				circle.setAttribute("id", this.rows*i + j);
-				circle.setAttribute("style", "width: 1.8em; height: 1.9em; border: 1px solid black; border-radius: 50%; margin: 0 auto; background-color: green;");
 
-				col.append(circle);
+					// variable for the element, which will be a circle
+					var circle = document.createElement("div"); 
 
-				// Creating an onclick event, when the circle is clicked it will call the play fucntion
-				circle.onclick = () => this.play(i*this.rows + j); 
+					circle.setAttribute("id", this.columns*i + j);
+					circle.setAttribute("style", "width: 50px; height: 50px; border-width: 0px; border-radius: 50%; margin: 5px; background-color: green;");
+
+					col.append(circle);
+
+					// Creating an onclick event, when the circle is clicked it will call the play fucntion
+					circle.onclick = () => this.play(i*this.columns + j); 
+
+				} else {
+
+					var empty = document.createElement("div");
+
+					empty.setAttribute("id", this.columns*i + j);
+					empty.setAttribute("style", "width: 50px; height: 50px; border-width: 0px; border-radius: 50%; margin: 5px; background-color: rgb(255 186 96); visibility: none");
+
+					col.append(empty);
+
+				}
 		    }
 		}
 
 		
 		// Initially we do the binary decomposition for each column, using the decompose function
 		for (let i = 0; i < this.columns; i++) {
-			this.decompose(i, this.rows);
+			this.decompose(i, i+1);
 		}
 
 
@@ -177,7 +228,7 @@ class Table {
 		if (this.dif == 1) {
 
 			// total ammount of positions
-			let i = this.rows * this.columns; 
+			let i = this.columns * this.columns; 
 
 			// counter will have the ammount of objects still in the table
 			let counter = 0;
@@ -218,13 +269,13 @@ class Table {
 		this.state[pick] = false;
 		
 		// removing the circle by turning it invisible
-		circle.setAttribute("style", "width: 1.8em; height: 1.9em; border: 1px solid rgb(255 186 96); border-radius: 50%; margin: 0 auto; background-color: rgb(255 186 96); visibility: none");
+		circle.setAttribute("style", "width: 50px; height: 50px; border-width: 0px; border-radius: 50%; margin: 5px; background-color: rgb(255 186 96); visibility: none");
 		
 		// removes all the objects above that position in that column
-		while(pick%this.rows != 0 && pick >=0) {
+		while(pick%this.columns != 0 && pick >=0) {
 			pick = pick-1;
 		    circle = document.getElementById(pick);
-			circle.setAttribute("style", "width: 1.8em; height: 1.9em; border: 1px solid rgb(255 186 96); border-radius: 50%; margin: 0 auto; background-color: rgb(255 186 96); visibility: none");
+			circle.setAttribute("style", "width: 50px; height: 50px; border-width: 0px; border-radius: 50%; margin: 5px; background-color: rgb(255 186 96); visibility: none");
 			this.state[pick] = false;
 		}
 
@@ -232,8 +283,8 @@ class Table {
 		// Checks if the game is finished (if the state array is false for all positions) and records it in the isFinished variable
 		var isFinished = true;
 		for (let a = 0; a < this.columns; a++) {
-			for (let b = 0; b < this.rows; b++) {
-				if (this.state[a* this.rows + b]) {
+			for (let b = 0; b < this.columns; b++) {
+				if (this.state[a* this.columns + b]) {
 					isFinished=false;
 				}
 			}
@@ -252,14 +303,13 @@ class Table {
 		// erasing the circle that was clicked on by the player, by making it invisible
 		var circle = document.getElementById(pos);
 		this.state[pos] = false;
-		circle.setAttribute("style", "width: 1.8em; height: 1.9em; border: 1px solid rgb(255 186 96); border-radius: 50%; margin: 0 auto; background-color: rgb(255 186 96); visibility: none");
-
+		circle.setAttribute("style", "width: 50px; height: 50px; border-width: 0px; border-radius: 50%; margin: 5px; background-color: rgb(255 186 96); visibility: none");
 
 		// erasing all of the circles above the position given, in the same column
-		while(pos%this.rows != 0 && pos >=0) {
+		while(pos%this.columns != 0 && pos >=0) {
 			pos = pos-1;
 		    circle = document.getElementById(pos);
-			circle.setAttribute("style", "width: 1.8em; height: 1.9em; border: 1px solid rgb(255 186 96); border-radius: 50%; margin: 0 auto; background-color: rgb(255 186 96); visibility: none");
+			circle.setAttribute("style", "width: 50px; height: 50px; border-width: 0px; border-radius: 50%; margin: 5px; background-color: rgb(255 186 96); visibility: none");
 			this.state[pos] = false;
 		}
 
@@ -267,8 +317,8 @@ class Table {
 		// checking if the game has finished, and recording the result in the isFinished variable
 		var isFinished = true;
 		for (let a = 0; a < this.columns; a++) {
-			for (let b = 0; b < this.rows; b++) {
-				if (this.state[a* this.rows + b]) {
+			for (let b = 0; b < this.columns; b++) {
+				if (this.state[a* this.columns + b]) {
 					isFinished=false;
 				}
 			}
@@ -283,8 +333,8 @@ class Table {
 			let objcounter = 0;
 			for (let c = 0; c < this.columns; c++) {
 				objcounter = 0;
-				for (let r = 0; r < this.rows; r++) {
-					if (this.state[c*this.rows + r]) {
+				for (let r = 0; r < this.columns; r++) {
+					if (this.state[c*this.columns + r]) {
 						objcounter=objcounter+1;
 					}
 				}
@@ -371,12 +421,12 @@ class Table {
 		// if unbalanced, then the computer will chose the option to balance the column
 		if (unbalanced) {
 			let total = extra + quantity;
-			this.posAI = col * this.rows + (this.rows-total) + quantity - 1;
+			this.posAI = col * this.columns + (this.columns-total) + quantity - 1;
 
 		} else {
 
 			//if balanced, then the computer choses a random play
-			let i = this.rows * this.columns;
+			let i = this.columns * this.columns;
 			let counter = 0;
 			for (let k = 0; k < i; k++) {
 				if (this.state[k]) {
@@ -395,29 +445,27 @@ class Table {
 			this.posAI = choice[j];
 		}
 	}
-
-
 }
 
+const DIVTABLE = document.getElementById("DIVtable");
+const DIVREGRAS = document.getElementById("DIVregras");
 
 function hideDivTabela() {
 
-	const DIV = document.getElementById("DIVtable");
-
-	if (DIV.style.display === "block") {
-		DIV.style.display = "none";
+	if (DIVTABLE.style.display === "block") {
+		DIVTABLE.style.display = "none";
 	} else {
-		DIV.style.display = "block";
+		DIVREGRAS.style.display ="none";
+		DIVTABLE.style.display = "block";
 	}
 }
 
 function hideDivRegras() {
 
-	const DIV = document.getElementById("DIVregras");
-
-	if (DIV.style.display === "block") {
-		DIV.style.display = "none";
+	if (DIVREGRAS.style.display === "block") {
+		DIVREGRAS.style.display = "none";
 	} else {
-		DIV.style.display = "block";
+		DIVTABLE.style.display = "none";
+		DIVREGRAS.style.display = "block";
 	}
 }
