@@ -36,7 +36,9 @@ body {
     line-height: 1.5;
 }
 
-.button:hover {
+.button:hover,
+.dificuldade:hover,
+.whoStarts:hover {
     background-color: rgb(120, 133, 161);
 }
 
@@ -60,17 +62,12 @@ body {
     font-size: 35px;
 }
 
-.dificuldade,
-button:hover {
+.dificuldade {
     position: relative;
 
     float: right;
     margin-top: 25px;
     margin-right: 1620px;
-}
-
-.dificuldade:hover {
-    background-color: rgb(120, 133, 161);
 }
 
 
@@ -79,10 +76,6 @@ button:hover {
     margin-top: -33px;
     margin-right: 1486px;
     float: right;
-}
-
-.whoStarts:hover {
-    background-color: rgb(120, 133, 161);
 }
 
 #boardSizeName {
@@ -114,7 +107,7 @@ button:hover {
 #board {
     font-size: 25px;
     width: 600px;
-    height: 600px;
+    height: 800px;
 }
 
 #buttonFF {
@@ -122,14 +115,6 @@ button:hover {
     left: 400px;
     top: 350px;
 }
-
-
-
-
-
-
-
-
 
 
 /* BAIXO */
@@ -176,7 +161,7 @@ th {
 .footer {
     position: absolute;
     left: 20px;
-    bottom: 15px;
+    bottom: 25px;
 }
 
 .inline {
