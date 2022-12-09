@@ -65,6 +65,12 @@ document.getElementById("createbutton").onclick = function () {
 	
 	var cols = document.getElementById("cols").value;
 	var dif = document.getElementById("dificuldadeButton").value;     // difficulty
+	var online = document.getElementById("Online").value;             // pvp or pve
+
+	var pvp = false;
+	if (online == "pvp") {
+		pvp = true;
+	}
 
 
 	// Setting the difficulty based on the form value received
@@ -105,7 +111,7 @@ document.getElementById("createbutton").onclick = function () {
 
 
 	// Create a new Table class, which will create the desired table in the "newBoard" div class
-	let t = new Table(cols, difficulty, startP);
+	let t = new Table(cols, difficulty, startP, pvp);
 	t.buildTable();
 
 }
@@ -122,11 +128,12 @@ document.getElementById("quit").onclick = function () {
 
 
 class Table {
-	constructor(columns, dif, firstPlayer) {
+	constructor(columns, dif, firstPlayer, pvp) {
 
 	    this.columns = columns;		
 	    this.firstPlayer = firstPlayer;                      // firstPlayer, if true it's the player, if false it's the computer
 		this.dif = dif;                                      // Lvl of difficulty, if =1 it's the easy verion, if =2 it's the hard version
+		this.pvp = pvp;                                      // If true, the player will play against another player online
 
 		this.posAI = 0;										 // This variable will be the position the computer plays (if lvl of diff = 2)
 
@@ -146,6 +153,35 @@ class Table {
 		for (let i = 0; i < this.columns; i++) {
 			this.board[i] = new Array(4);                 // it only needs 4 elements, because there is a maximum of 10 objects per column, 2^(4) = 16
 		}
+
+		if (pvp) connectGame();
+
+
+	}
+
+	connectGame() {
+
+		if (nick == "" || pass == "") {
+			return;
+		}
+		var size = document.getElementById("cols").value;
+		let obj = { 'group': 12, 'nick': nick, 'password': pass, 'size': size };
+
+		if(!XMLHttpRequest) { console.log('XHR not supported'); return; }
+
+		const xhr = new XMLHttpRequest();
+		xhr.open('POST', 'http://twserver.alunos.dcc.fc.up.pt:8008/join', true);
+		xhr.onreadystatechange = function() {
+			if (xhr.readyState < 4) return;
+			if (xhr.status == 200)  {
+				console.log(xhr.responseText);
+			}
+			if (xhr.status == 400) {
+				console.log("User already registered with a different password.");
+			}
+		}
+
+		xhr.send(JSON.stringify(obj));
 
 
 	}
