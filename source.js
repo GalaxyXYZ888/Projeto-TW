@@ -85,20 +85,24 @@ document.getElementById("createbutton").onclick = function () {
 		t.buildTable();
 	}
 
+
 	document.getElementById("quit").onclick = function () {
 		var bCont = document.getElementById("boardContainer");
 		if (bCont.hasChildNodes()) {
 			bCont.firstChild.remove();
 		}
 	
-		if (t!= null) {
+		if (t != null) {
 			if (t.pvp) {
 				const xhr = new XMLHttpRequest();
 				xhr.open('POST', 'http://twserver.alunos.dcc.fc.up.pt:8008/leave', true);
+
+				let obj = { 'nick': nick, 'password': pass, 'game': t.gameId };
+				xhr.send(JSON.stringify(obj));
 			}
 		}
-	
-	}
+
+	}	
 
 }
 
@@ -111,7 +115,7 @@ class Table {
 		this.dif = dif;                                      // Lvl of difficulty, if =1 it's the easy verion, if =2 it's the hard version
 		this.pvp = pvp;                                      // If true, the player will play against another player online
 		this.turn = true;                                    // In an online context, its our tunr to play if this boolean is true
-
+		
 		this.gameId = "";									 // THe id of an online game
 
 		this.posAI = 0;										 // This variable will be the position the computer plays (if lvl of diff = 2)
@@ -133,10 +137,11 @@ class Table {
 			this.board[i] = new Array(4);                 // it only needs 4 elements, because there is a maximum of 10 objects per column, 2^(4) = 16
 		}
 
-	
-
-
 	}
+
+
+
+
 
 	connectGame() {
 
@@ -173,6 +178,7 @@ class Table {
 		const eventSource = new EventSource(url);
 		eventSource.onerror = (event) => {
 			var data = event.data;
+			console.log(data);
 		}
 		eventSource.onmessage = (event) => {
 			const dataM = JSON.parse(event.data);
@@ -187,11 +193,6 @@ class Table {
 			if (Object.keys(dataM).length == 4 && !('winner' in dataM)) {
 				var rack = dataM.rack;
 
-				console.log("Rack received: ");
-				for (let obj of rack) {
-					console.log(obj);
-				}
-
 				if (nick == dataM.turn) {
 					this.turn = true;
 				} else {
@@ -203,20 +204,26 @@ class Table {
 
 
 			} 
-			if (Object.keys(dataM).length == 4 && 'winner' in dataM) {
+			if ('winner' in dataM) {
+
+				if (Object.keys(dataM).length == 4) {
 			
-				if (dataM.winner == nick) {
-					this.endGame(true);
+					if (dataM.winner == nick) {
+						this.endGame(true);
+					} else {
+						this.endGame(false);
+					}
+				
 				} else {
-					this.endGame(false);
+					if (dataM.winner == nick) {
+						this.endGame(true);
+					} 
 				}
-			
 				eventSource.close();
 
 			}
-
 		}
-		//eventSource.close();
+
 
 	}
 
@@ -454,8 +461,6 @@ class Table {
 				var piecesLeft = this.columns - 1 - (originalPos%this.columns);
 				var columnplayed = Math.floor(originalPos/this.columns);
 				let obj = { 'nick': nick, 'password': pass, 'game': this.gameId, 'stack': columnplayed, 'pieces': piecesLeft };
-				
-				console.log("Played column " + obj.stack + " with " + obj.pieces + " pieces left.");
 				
 				xhr.send(JSON.stringify(obj));
 			}
