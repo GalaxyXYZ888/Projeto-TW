@@ -570,19 +570,67 @@ const DIVTABLE = document.getElementById("DIVtable");
 const DIVREGRAS = document.getElementById("DIVregras");
 const DIVLOGIN = document.getElementById("DIVlogin");
 
-function SummonLogin() {
+var firstClick = true;
 
-	DIVTABLE.style.display ="none";
-	DIVREGRAS.style.display = "none";
-	DIVLOGIN.style.display = "flex";
+document.getElementById("Resultados").onclick = function () {
 
-	const BUTTONLOGIN = document.getElementById("buttonLogin");
+	if (firstClick) {
 
-	BUTTONLOGIN.style.display ="none";
-}
+		firstClick = false;
+
+		const xhr = new XMLHttpRequest();
+
+		xhr.open('POST', 'http://twserver.alunos.dcc.fc.up.pt:8008/ranking', true);
+
+		xhr.onreadystatechange = function() {
+			if (xhr.readyState < 4) return;
+			if (xhr.status == 200) {
+				let data = JSON.parse(xhr.responseText);
+				if (!('error' in data)) {
+
+					const table = document.getElementById("table");
+
+					let list = data.ranking;
+					let i = 1;
+					for (let elmnt of list) {
+						
+						const row = document.createElement("tr");
+						table.append(row);
+
+						const rank = document.createElement("td");
+						const name = document.createElement("td");
+						const vict = document.createElement("td");
+						const game = document.createElement("td");
+
+						const ranktxt = document.createTextNode("#" + i);
+						const nametxt = document.createTextNode("" + elmnt.nick);
+						const victtxt = document.createTextNode("" + elmnt.victories);
+						const gametxt = document.createTextNode("" + elmnt.games);
+
+						row.append(rank);
+						row.append(name);
+						row.append(vict);
+						row.append(game);
+
+						rank.append(ranktxt);
+						name.append(nametxt);
+						vict.append(victtxt);
+						game.append(gametxt);
+
+						console.log("User: " + elmnt.nick);
+						console.log("Victories: " + elmnt.victories);
+						console.log("Games: " + elmnt.games);
+						i++;
+					}
+				}
+			}
+
+		}
+		let obj = { 'group': 12, 'size': document.getElementById("cols").value };
+		xhr.send(JSON.stringify(obj));
+	}
 
 
-function hideDivTabela() {
 
 	if (DIVLOGIN.style.display === "flex") {
 
@@ -597,6 +645,18 @@ function hideDivTabela() {
 		DIVREGRAS.style.display ="none";
 		DIVTABLE.style.display = "block";
 	}
+
+}
+
+function SummonLogin() {
+
+	DIVTABLE.style.display ="none";
+	DIVREGRAS.style.display = "none";
+	DIVLOGIN.style.display = "flex";
+
+	const BUTTONLOGIN = document.getElementById("buttonLogin");
+
+	BUTTONLOGIN.style.display ="none";
 }
 
 function hideDivRegras() {
