@@ -3,14 +3,11 @@ var pass = "";
 
 
 document.getElementById("Entrar").onclick = function () {
-	console.log("button clicked\n");
 	nick = document.getElementById("loginB").value;
 	pass = document.getElementById("passwordB").value;
 
 	if (nick == "") return;
 	if (pass == "") return;
-
-	console.log("it worked");
 
 	if(!XMLHttpRequest) { console.log('XHR not supported'); return; }
 
@@ -19,10 +16,8 @@ document.getElementById("Entrar").onclick = function () {
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState < 4) return;
 		if (xhr.status == 200)  {
-			console.log(xhr.responseText);
 		}
 		if (xhr.status == 400) {
-			console.log("User already registered with a different password.");
 		}
 	}
 
@@ -40,7 +35,6 @@ document.getElementById("createbutton").onclick = function () {
 	var online = document.getElementById("Online").value;             // pvp or pve
 
 	var pvp = false;
-	console.log(online);
 	if (online == "pvp") {
 		pvp = true;
 	}
@@ -85,21 +79,25 @@ document.getElementById("createbutton").onclick = function () {
 
 	// Create a new Table class, which will create the desired table in the "newBoard" div class
 	let t = new Table(cols, difficulty, startP, pvp);
-	console.log(pvp);
 	if (pvp) {
 		t.connectGame();
 	} else {
 		t.buildTable();
 	}
 
-}
-
-
-// If a playe.updateGame is not a function.updateGame is not a functionr clicks on the "quit" button, then the div class containing the board gets removed
-document.getElementById("quit").onclick = function () {
-	var bCont = document.getElementById("boardContainer");
-	if (bCont.hasChildNodes()) {
-		bCont.firstChild.remove();
+	document.getElementById("quit").onclick = function () {
+		var bCont = document.getElementById("boardContainer");
+		if (bCont.hasChildNodes()) {
+			bCont.firstChild.remove();
+		}
+	
+		if (t!= null) {
+			if (t.pvp) {
+				const xhr = new XMLHttpRequest();
+				xhr.open('POST', 'http://twserver.alunos.dcc.fc.up.pt:8008/leave', true);
+			}
+		}
+	
 	}
 
 }
@@ -148,20 +146,19 @@ class Table {
 		var size = document.getElementById("cols").value;
 		let obj = { 'group': 12, 'nick': nick, 'password': pass, 'size': size };
 
-		if(!XMLHttpRequest) { console.log('XHR not supported'); return; }
+		if(!XMLHttpRequest) { }
 
 		const xhr = new XMLHttpRequest();
 		xhr.open('POST', 'http://twserver.alunos.dcc.fc.up.pt:8008/join', true);
 		xhr.onreadystatechange = () => {
 			if (xhr.readyState < 4) return;
 			if (xhr.status == 200)  {
-				console.log(xhr.responseText);
 				var resposta = JSON.parse(xhr.responseText);
 				this.gameId = resposta.game;
 				this.updateGame(this.gameId);
 			}
 			if (xhr.status == 400) {
-				console.log("User already registered with a different password.");
+				
 			}
 		}
 
@@ -174,16 +171,12 @@ class Table {
 
 		const url = "http://twserver.alunos.dcc.fc.up.pt:8008/update?" + encodeURI("nick=" + nick + "&game=" + game);
 		const eventSource = new EventSource(url);
-		console.log("eventsource= "+eventSource.withCredentials);
 		eventSource.onerror = (event) => {
 			var data = event.data;
-			console.log(data);
 		}
 		eventSource.onmessage = (event) => {
 			const dataM = JSON.parse(event.data);
-			console.log(dataM);
 			if (Object.keys(dataM).length == 2) {
-				console.log("Game has started");
 				if (nick == dataM.turn) {
 					this.turn = true;
 				} else {
@@ -191,12 +184,61 @@ class Table {
 				}
 				this.buildTable();
 			}
-			if (Object.keys(dataM).length == 4) {
-				console.log("Move has been made");
+			if (Object.keys(dataM).length == 4 && !('winner' in dataM)) {
+				var rack = dataM.rack;
+
+				console.log("Rack received: ");
+				for (let obj of rack) {
+					console.log(obj);
+				}
+
+				if (nick == dataM.turn) {
+					this.turn = true;
+				} else {
+					this.turn = false;
+				}
+
+
+				this.processMove(rack);
+
+
+			} 
+			if (Object.keys(dataM).length == 4 && 'winner' in dataM) {
+			
+				if (dataM.winner == nick) {
+					this.endGame(true);
+				} else {
+					this.endGame(false);
+				}
+			
+				eventSource.close();
+
 			}
 
 		}
 		//eventSource.close();
+
+	}
+
+	processMove(rack) {
+
+		let pos = 0;
+		var circle = document.getElementById(0);
+
+		for (let n of rack) {
+
+			for (let i = 0; i < this.columns; i++){
+				if (i < this.columns - n) {
+					circle = document.getElementById(pos);
+					circle.setAttribute("style", "width: 50px; height: 50px; border-width: 0px; border-radius: 50%; margin: 5px; background-color: rgb(255 186 96); visibility: none");
+					this.state[pos] = false;
+				}
+				pos++;
+			}
+			
+
+		}
+
 
 	}
    
@@ -209,8 +251,7 @@ class Table {
 
 		// length will be the length of each column
 		var length = 50 * this.columns + 5 * this.columns + 5;
-		console.log(length+ " " + this.columns);
-
+		
 	    // for loop to create the elements of the table
 		for (let i = 0; i < this.columns; i++) {
 
@@ -384,7 +425,7 @@ class Table {
 		}
 
 		// if the game is finished, call the endGame function with the value true because the player won
-		if (isFinished) {
+		if (isFinished && !this.pvp) {
 			this.endGame(true);
 		} else {
 
@@ -408,10 +449,14 @@ class Table {
 				this.nextPlay(this.posAI);
 			} else {
 				const xhr = new XMLHttpRequest();
-				xhr.open('POST', 'http://twserver.alunos.dcc.fc.up.pt:8008/notify');
+				xhr.open('POST', 'http://twserver.alunos.dcc.fc.up.pt:8008/notify', true);
 				
 				var piecesLeft = this.columns - 1 - (originalPos%this.columns);
-				let obj = { 'nick': nick, 'password': pass, 'game': this.gameId, 'stack': originalPos%this.columns, 'pieces': piecesLeft };
+				var columnplayed = Math.floor(originalPos/this.columns);
+				let obj = { 'nick': nick, 'password': pass, 'game': this.gameId, 'stack': columnplayed, 'pieces': piecesLeft };
+				
+				console.log("Played column " + obj.stack + " with " + obj.pieces + " pieces left.");
+				
 				xhr.send(JSON.stringify(obj));
 			}
 		}
