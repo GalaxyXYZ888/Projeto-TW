@@ -32,42 +32,15 @@ document.getElementById("Entrar").onclick = function () {
 
 }
 
-/*
-document.getElementById("playVsPlayer").onclick = function () {
-
-
-	var name = document.getElementById("loginB").value;
-	var pass = document.getElementById("passwordB").value;
-	var size = document.getElementById("cols").value;
-	let obj = { 'group': 12, 'nick': name, 'password': pass, 'size': size };
-
-	if(!XMLHttpRequest) { console.log('XHR not supported'); return; }
-
-	const xhr = new XMLHttpRequest();
-	xhr.open('POST', 'http://twserver.alunos.dcc.fc.up.pt:8008/join', true);
-	xhr.onreadystatechange = function() {
-		if (xhr.readyState < 4) return;
-		if (xhr.status == 200)  {
-			console.log(xhr.responseText);
-		}
-		if (xhr.status == 400) {
-			console.log("User already registered with a different password.");
-		}
-	}
-
-	xhr.send(JSON.stringify(obj));
-
-
-}
-*/
 
 document.getElementById("createbutton").onclick = function () {
-	
+
 	var cols = document.getElementById("cols").value;
 	var dif = document.getElementById("dificuldadeButton").value;     // difficulty
 	var online = document.getElementById("Online").value;             // pvp or pve
 
 	var pvp = false;
+	console.log(online);
 	if (online == "pvp") {
 		pvp = true;
 	}
@@ -112,12 +85,17 @@ document.getElementById("createbutton").onclick = function () {
 
 	// Create a new Table class, which will create the desired table in the "newBoard" div class
 	let t = new Table(cols, difficulty, startP, pvp);
-	t.buildTable();
+	console.log(pvp);
+	if (pvp) {
+		t.connectGame();
+	} else {
+		t.buildTable();
+	}
 
 }
 
 
-// If a player clicks on the "quit" button, then the div class containing the board gets removed
+// If a playe.updateGame is not a function.updateGame is not a functionr clicks on the "quit" button, then the div class containing the board gets removed
 document.getElementById("quit").onclick = function () {
 	var bCont = document.getElementById("boardContainer");
 	if (bCont.hasChildNodes()) {
@@ -134,6 +112,9 @@ class Table {
 	    this.firstPlayer = firstPlayer;                      // firstPlayer, if true it's the player, if false it's the computer
 		this.dif = dif;                                      // Lvl of difficulty, if =1 it's the easy verion, if =2 it's the hard version
 		this.pvp = pvp;                                      // If true, the player will play against another player online
+		this.turn = true;                                    // In an online context, its our tunr to play if this boolean is true
+
+		this.gameId = "";									 // THe id of an online game
 
 		this.posAI = 0;										 // This variable will be the position the computer plays (if lvl of diff = 2)
 
@@ -154,7 +135,7 @@ class Table {
 			this.board[i] = new Array(4);                 // it only needs 4 elements, because there is a maximum of 10 objects per column, 2^(4) = 16
 		}
 
-		if (pvp) connectGame();
+	
 
 
 	}
@@ -171,10 +152,13 @@ class Table {
 
 		const xhr = new XMLHttpRequest();
 		xhr.open('POST', 'http://twserver.alunos.dcc.fc.up.pt:8008/join', true);
-		xhr.onreadystatechange = function() {
+		xhr.onreadystatechange = () => {
 			if (xhr.readyState < 4) return;
 			if (xhr.status == 200)  {
 				console.log(xhr.responseText);
+				var resposta = JSON.parse(xhr.responseText);
+				this.gameId = resposta.game;
+				this.updateGame(this.gameId);
 			}
 			if (xhr.status == 400) {
 				console.log("User already registered with a different password.");
@@ -183,6 +167,36 @@ class Table {
 
 		xhr.send(JSON.stringify(obj));
 
+	}
+
+	updateGame(game) {
+
+
+		const url = "http://twserver.alunos.dcc.fc.up.pt:8008/update?" + encodeURI("nick=" + nick + "&game=" + game);
+		const eventSource = new EventSource(url);
+		console.log("eventsource= "+eventSource.withCredentials);
+		eventSource.onerror = (event) => {
+			var data = event.data;
+			console.log(data);
+		}
+		eventSource.onmessage = (event) => {
+			const dataM = JSON.parse(event.data);
+			console.log(dataM);
+			if (Object.keys(dataM).length == 2) {
+				console.log("Game has started");
+				if (nick == dataM.turn) {
+					this.turn = true;
+				} else {
+					this.turn = false;
+				}
+				this.buildTable();
+			}
+			if (Object.keys(dataM).length == 4) {
+				console.log("Move has been made");
+			}
+
+		}
+		//eventSource.close();
 
 	}
    
@@ -337,6 +351,13 @@ class Table {
 
 	play(pos) {
 
+		if (this.pvp) {
+			if (!this.turn) {
+				return;
+			}
+		}
+
+		const originalPos = pos;
 
 		// erasing the circle that was clicked on by the player, by making it invisible
 		var circle = document.getElementById(pos);
@@ -380,9 +401,19 @@ class Table {
 				this.decompose(c, objcounter);
 			}
 
-			// functions to decide the best position to play and making the computer play in that position (if diff lvl = 2)
-			this.bestChoice();
-			this.nextPlay(this.posAI);
+			if (!this.pvp) {
+
+				// functions to decide the best position to play and making the computer play in that position (if diff lvl = 2)
+				this.bestChoice();
+				this.nextPlay(this.posAI);
+			} else {
+				const xhr = new XMLHttpRequest();
+				xhr.open('POST', 'http://twserver.alunos.dcc.fc.up.pt:8008/notify');
+				
+				var piecesLeft = this.columns - 1 - (originalPos%this.columns);
+				let obj = { 'nick': nick, 'password': pass, 'game': this.gameId, 'stack': originalPos%this.columns, 'pieces': piecesLeft };
+				xhr.send(JSON.stringify(obj));
+			}
 		}
     }
 
