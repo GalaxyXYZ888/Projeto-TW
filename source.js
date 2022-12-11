@@ -199,6 +199,7 @@ class Table {
 					this.turn = false;
 				}
 				this.buildTable();
+				this.updateTimer();
 			}
 
 			// Case in which there has been a move, but the game is not finished
@@ -213,6 +214,7 @@ class Table {
 
 				// calling another method to process the move
 				this.processMove(rack);
+				this.updateTimer();
 
 			}
 
@@ -231,7 +233,9 @@ class Table {
 				} else {
 					if (dataM.winner == nick) {
 						this.endGame(true);
-					} 
+					} else {
+						this.endGame(false);
+					}
 				}
 
 				// Closing the event source
@@ -239,6 +243,46 @@ class Table {
 
 			}
 		}
+	}
+
+	// method called ot update the timer
+	updateTimer() {
+
+		const timeDiv = document.getElementById("timer");
+
+		if (timeDiv.hasChildNodes()) {
+			timeDiv.firstChild.remove();
+		}
+
+		const h3 = document.createElement("h3");
+
+		timeDiv.append(h3);
+
+		var currentDate = new Date().getTime();
+		var expiration = currentDate + 120000;
+
+		var x = setInterval(function() {
+
+			var now = new Date().getTime();
+			var timeRemaining = expiration - now;
+			var timeSeconds = Math.floor(timeRemaining/1000);
+
+			if (h3.hasChildNodes()) {
+				h3.firstChild.remove();
+			}
+
+			if (timeRemaining < 0) {
+				clearInterval(x);
+				return;
+			}
+
+			const txtTime = document.createTextNode("Time left: " + timeSeconds + " seconds.");
+
+			h3.append(txtTime);
+
+		}, 1000);
+
+
 	}
 
 	// method to process a move made by the oponent
@@ -263,6 +307,16 @@ class Table {
 
 	// method to build the table
 	buildTable() {
+
+
+		if (this.pvp) {
+			const parTime = document.getElementById('boardSize');
+			const timeDiv = document.createElement("div");
+			timeDiv.setAttribute("id", "timer");
+
+			parTime.append(timeDiv);
+
+		}
 
 		const parent = document.getElementById("board");  // div that will contain the board
 
@@ -492,11 +546,22 @@ class Table {
 	// method called when the game ended, where parameter playerWon is true if the user won
 	endGame(playerWon) {
 
+		// removing timer
+		if (this.pvp) {
+			const timer = document.getElementById("timer");
+			if (!(timer == null)) {
+				timer.remove();
+			}
+		}
 
-		// removing the div containing the board
-		var board = document.getElementById("board");
+		if (document.getElementById("board") != null) {
+
+			// removing the div containing the board
+			var board = document.getElementById("board");
+			board.remove();
+		}
+
 		var body = document.getElementById("boardContainer");
-		board.remove();
 
 		// if the player won, create a message saying "You have won!", other wise "You have lost!"
 		if (playerWon) {
