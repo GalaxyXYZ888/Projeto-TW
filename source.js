@@ -1,39 +1,45 @@
+
+// Global varaibles to represent the user if they do a login
 var nick = "";
 var pass = "";
 
-
+// function called when the button to perform the login is pressed
 document.getElementById("Entrar").onclick = function () {
-	nick = document.getElementById("loginB").value;
-	pass = document.getElementById("passwordB").value;
+	nick = document.getElementById("loginB").value;              // user's nick
+	pass = document.getElementById("passwordB").value;           // user's password
 
+	// case in which the fields on the form are empty 
 	if (nick == "") return;
 	if (pass == "") return;
 
 	if(!XMLHttpRequest) { console.log('XHR not supported'); return; }
 
+
+	// creating a new XML request to register
 	const xhr = new XMLHttpRequest();
 	xhr.open('POST', 'http://twserver.alunos.dcc.fc.up.pt:8008/register', true);
-	xhr.onreadystatechange = function() {
+	xhr.onreadystatechange = () => {
 		if (xhr.readyState < 4) return;
-		if (xhr.status == 200)  {
-		}
 		if (xhr.status == 400) {
+
 		}
 	}
 
 	xhr.send(JSON.stringify({ 'nick': nick, 'password': pass}));
 
+	// the login pop-up disappears
 	DIVLOGIN.style.display = "none";
 
 }
 
-
+// function called when the button to create the game is pressed
 document.getElementById("createbutton").onclick = function () {
 
-	var cols = document.getElementById("cols").value;
+	var cols = document.getElementById("cols").value;                 // columns
 	var dif = document.getElementById("dificuldadeButton").value;     // difficulty
 	var online = document.getElementById("Online").value;             // pvp or pve
 
+	// if pvp is true, then the player is requesting to play online, if false then offline
 	var pvp = false;
 	if (online == "pvp") {
 		pvp = true;
@@ -85,13 +91,15 @@ document.getElementById("createbutton").onclick = function () {
 		t.buildTable();
 	}
 
-
+	// if thr 'quit' button is pressed, then the board gets deleted and the serves is notified (if its an online game)
 	document.getElementById("quit").onclick = function () {
+
 		var bCont = document.getElementById("boardContainer");
 		if (bCont.hasChildNodes()) {
-			bCont.firstChild.remove();
+			bCont.firstChild.remove();             // We remove the only child from this div, which is the board
 		}
 	
+		// if its online, we notify the server that we left the game
 		if (t != null) {
 			if (t.pvp) {
 				const xhr = new XMLHttpRequest();
@@ -114,17 +122,18 @@ class Table {
 	    this.firstPlayer = firstPlayer;                      // firstPlayer, if true it's the player, if false it's the computer
 		this.dif = dif;                                      // Lvl of difficulty, if =1 it's the easy verion, if =2 it's the hard version
 		this.pvp = pvp;                                      // If true, the player will play against another player online
-		this.turn = true;                                    // In an online context, its our tunr to play if this boolean is true
+		this.turn = true;                                    // In an online context, its our turn to play if this boolean is true
 		
-		this.gameId = "";									 // THe id of an online game
+		this.gameId = "";									 // The id of an online game
 
 		this.posAI = 0;										 // This variable will be the position the computer plays (if lvl of diff = 2)
 
 		this.state = new Array(this.columns*this.columns);   // state array contains boolean values, if true then there exists an object in that position
 
+		// initializing the state array
 		for (let i = 0; i < this.columns; i++) {
 			for (let j = 0; j < this.columns; j++) {
-				if (j < this.columns -1 - i) { this.state[i* this.columns + j] = false; }
+				if (j < this.columns -1 - i) { this.state[i* this.columns + j] = false; }         // the positions that have no piece already start as false
 				else { this.state[i*this.columns + j] = true; }
 			}
 		}
@@ -139,41 +148,35 @@ class Table {
 
 	}
 
-
-
-
-
+	// method that will tell the server we are waiting for a game (in the case of an online context)
 	connectGame() {
 
-		if (nick == "" || pass == "") {
-			return;
-		}
+		if (nick == "" || pass == "") return;                    // we leave the function if the user has not logged in yet
+
 		var size = document.getElementById("cols").value;
 		let obj = { 'group': 12, 'nick': nick, 'password': pass, 'size': size };
 
 		if(!XMLHttpRequest) { }
 
+		// performing a join request
 		const xhr = new XMLHttpRequest();
 		xhr.open('POST', 'http://twserver.alunos.dcc.fc.up.pt:8008/join', true);
 		xhr.onreadystatechange = () => {
 			if (xhr.readyState < 4) return;
 			if (xhr.status == 200)  {
-				var resposta = JSON.parse(xhr.responseText);
-				this.gameId = resposta.game;
-				this.updateGame(this.gameId);
-			}
-			if (xhr.status == 400) {
-				
+				var answer = JSON.parse(xhr.responseText);
+				this.gameId = answer.game;
+				this.updateGame(this.gameId);                  // once we join a game, we update the game ID
 			}
 		}
-
 		xhr.send(JSON.stringify(obj));
 
 	}
 
+	// method to update the game, specially the board
 	updateGame(game) {
 
-
+		// performing an update request with an event source
 		const url = "http://twserver.alunos.dcc.fc.up.pt:8008/update?" + encodeURI("nick=" + nick + "&game=" + game);
 		const eventSource = new EventSource(url);
 		eventSource.onerror = (event) => {
@@ -181,31 +184,38 @@ class Table {
 			console.log(data);
 		}
 		eventSource.onmessage = (event) => {
+
 			const dataM = JSON.parse(event.data);
-			if (Object.keys(dataM).length == 2) {
-				if (nick == dataM.turn) {
+			
+			// Case in which the game starts
+			if (Object.keys(dataM).length == 2) {                         
+				if (nick == dataM.turn) {                                 // Defining wether it's our turn or not
 					this.turn = true;
 				} else {
 					this.turn = false;
 				}
 				this.buildTable();
 			}
-			if (Object.keys(dataM).length == 4 && !('winner' in dataM)) {
+
+			// Case in which there has been a move, but the game is not finished
+			if (Object.keys(dataM).length == 4 && !('winner' in dataM)) {   
 				var rack = dataM.rack;
 
-				if (nick == dataM.turn) {
+				if (nick == dataM.turn) {                                  // Changing turns
 					this.turn = true;
 				} else {
 					this.turn = false;
 				}
 
-
+				// calling another method to process the move
 				this.processMove(rack);
 
+			}
 
-			} 
+			// Case in which the game is finished
 			if ('winner' in dataM) {
 
+				// We check if the game was even played, or if it was abandoned before starting
 				if (Object.keys(dataM).length == 4) {
 			
 					if (dataM.winner == nick) {
@@ -219,16 +229,18 @@ class Table {
 						this.endGame(true);
 					} 
 				}
+
+				// Closing the event source
 				eventSource.close();
 
 			}
 		}
-
-
 	}
 
+	// method to process a move made by the oponent
 	processMove(rack) {
 
+		// for every circle in the board, we see if its still present in the rack that the server sent us
 		let pos = 0;
 		var circle = document.getElementById(0);
 
@@ -242,13 +254,10 @@ class Table {
 				}
 				pos++;
 			}
-			
-
 		}
-
-
 	}
-   
+
+	// method to build the table
 	buildTable() {
 
 		const parent = document.getElementById("board");  // div that will contain the board
@@ -290,6 +299,8 @@ class Table {
 
 				} else {
 
+					// creating invisible circles in the places where there shouldnt be any pieces
+					// these divs will not have any onclick event, so they're not playable
 					var empty = document.createElement("div");
 
 					empty.setAttribute("id", this.columns*i + j);
@@ -396,9 +407,10 @@ class Table {
 	}
 
 
-
+	// plays the move of the player
 	play(pos) {
 
+		// in an online context, we check to see if it's our turn
 		if (this.pvp) {
 			if (!this.turn) {
 				return;
@@ -431,7 +443,7 @@ class Table {
 			}
 		}
 
-		// if the game is finished, call the endGame function with the value true because the player won
+		// if the game is finished, call the endGame function with the value true because the player won (on an offline context)
 		if (isFinished && !this.pvp) {
 			this.endGame(true);
 		} else {
@@ -454,7 +466,10 @@ class Table {
 				// functions to decide the best position to play and making the computer play in that position (if diff lvl = 2)
 				this.bestChoice();
 				this.nextPlay(this.posAI);
+
 			} else {
+
+				// making a notify request to notify the server of our move
 				const xhr = new XMLHttpRequest();
 				xhr.open('POST', 'http://twserver.alunos.dcc.fc.up.pt:8008/notify', true);
 				
@@ -492,7 +507,7 @@ class Table {
 	}
 
 
-	// Function to do the binary deomposition of a column col with a number num of objects
+	// method to do the binary deomposition of a column col with a number num of objects
 	decompose(col, num) {
 
 		// Since the maximum number of objects in a column is 10, then we only need 4 bits, so we start at number 3
@@ -506,7 +521,7 @@ class Table {
 		}
 	}
 
-
+	// method to calculate the best position for the computer to play
 	bestChoice() {
 		let col = 0;
 		let quantity = 0;
@@ -570,67 +585,116 @@ const DIVTABLE = document.getElementById("DIVtable");
 const DIVREGRAS = document.getElementById("DIVregras");
 const DIVLOGIN = document.getElementById("DIVlogin");
 
-var firstClick = true;
 
-document.getElementById("Resultados").onclick = function () {
+var rankingData = "";
 
-	if (firstClick) {
+// method called when the Ranking button is pressed
+document.getElementById("Ranking").onclick = function () {
 
-		firstClick = false;
+	const xhr = new XMLHttpRequest();
 
-		const xhr = new XMLHttpRequest();
+	xhr.open('POST', 'http://twserver.alunos.dcc.fc.up.pt:8008/ranking', true);
 
-		xhr.open('POST', 'http://twserver.alunos.dcc.fc.up.pt:8008/ranking', true);
+	xhr.onreadystatechange = () => {
+		if (xhr.readyState < 4) return;
+		if (xhr.status == 200) {
 
-		xhr.onreadystatechange = function() {
-			if (xhr.readyState < 4) return;
-			if (xhr.status == 200) {
-				let data = JSON.parse(xhr.responseText);
-				if (!('error' in data)) {
+			var answer = xhr.responseText;
+			var data = JSON.parse(answer);
+
+			if (rankingData == "" ) {
+
+				const table = document.getElementById("table");
+	
+				let list = data.ranking;
+				let i = 1;
+				for (let elmnt of list) {
+					
+					if (i> 10) break; 
+
+					const row = document.createElement("tr");
+					table.append(row);
+	
+					const rank = document.createElement("td");
+					const name = document.createElement("td");
+					const vict = document.createElement("td");
+					const game = document.createElement("td");
+	
+					const ranktxt = document.createTextNode("#" + i);
+					const nametxt = document.createTextNode("" + elmnt.nick);
+					const victtxt = document.createTextNode("" + elmnt.victories);
+					const gametxt = document.createTextNode("" + elmnt.games);
+	
+					row.append(rank);
+					row.append(name);
+					row.append(vict);
+					row.append(game);
+	
+					rank.append(ranktxt);
+					name.append(nametxt);
+					vict.append(victtxt);
+					game.append(gametxt);
+	
+					i++;
+				}
+
+			} else {
+				if (rankingData != answer) {
 
 					const table = document.getElementById("table");
 
+					var children = table.childNodes;
+					var size = children.length;
+
+					for (let i = 1; i < size; i++) {
+						if (size - i == 1 || size - i == 0) continue;
+						children.item(size-i).remove();
+					}
+
+	
 					let list = data.ranking;
 					let i = 1;
 					for (let elmnt of list) {
 						
+						if (i> 10) break; 
+	
 						const row = document.createElement("tr");
 						table.append(row);
-
+		
 						const rank = document.createElement("td");
 						const name = document.createElement("td");
 						const vict = document.createElement("td");
 						const game = document.createElement("td");
-
+		
 						const ranktxt = document.createTextNode("#" + i);
 						const nametxt = document.createTextNode("" + elmnt.nick);
 						const victtxt = document.createTextNode("" + elmnt.victories);
 						const gametxt = document.createTextNode("" + elmnt.games);
-
+		
 						row.append(rank);
 						row.append(name);
 						row.append(vict);
 						row.append(game);
-
+		
 						rank.append(ranktxt);
 						name.append(nametxt);
 						vict.append(victtxt);
 						game.append(gametxt);
-
-						console.log("User: " + elmnt.nick);
-						console.log("Victories: " + elmnt.victories);
-						console.log("Games: " + elmnt.games);
+		
 						i++;
 					}
+	
 				}
 			}
 
+			rankingData = answer;
+
 		}
-		let obj = { 'group': 12, 'size': document.getElementById("cols").value };
-		xhr.send(JSON.stringify(obj));
 	}
 
-
+	let obj = { 'group': 12, 'size': document.getElementById("cols").value };
+	xhr.send(JSON.stringify(obj));
+	
 
 	if (DIVLOGIN.style.display === "flex") {
 
