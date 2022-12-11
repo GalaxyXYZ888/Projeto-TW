@@ -126,6 +126,7 @@ class Table {
 		this.dif = dif;                                      // Lvl of difficulty, if =1 it's the easy verion, if =2 it's the hard version
 		this.pvp = pvp;                                      // If true, the player will play against another player online
 		this.turn = true;                                    // In an online context, its our turn to play if this boolean is true
+		this.moves = 0;                                      // Number of moves a player made
 		
 		this.gameId = "";									 // The id of an online game
 
@@ -413,6 +414,9 @@ class Table {
 	// plays the move of the player
 	play(pos) {
 
+		// Increasing the number of moves a player made by 1
+		this.moves++;
+
 		// in an online context, we check to see if it's our turn
 		if (this.pvp) {
 			if (!this.turn) {
@@ -485,7 +489,7 @@ class Table {
 		}
     }
 
-
+	// method called when the game ended, where parameter playerWon is true if the user won
 	endGame(playerWon) {
 
 
@@ -506,6 +510,44 @@ class Table {
 			chat.appendChild(txt);
 			body.appendChild(chat);
 		}
+
+		// Updating Web Storage
+		
+		if (typeof(Storage) === 'undefined' || this.pvp || (!this.pvp && !playerWon)) return;
+
+		console.log(this.moves);
+
+		if (localStorage.getItem('results') == "null") {
+
+			let obj = [this.moves];
+		
+			localStorage.setItem('results', JSON.stringify(obj));
+
+			return;
+		}
+
+		let res = JSON.parse(localStorage.getItem('results'));
+
+		var itemInserted = false;
+		for (let r in res) {
+			if (this.moves <= res[r]) {
+				res.push(this.moves);
+				res.sort();
+				if (res.length > 10) {
+					res.pop();
+				}
+				itemInserted = true;
+				break;
+			}
+		}
+
+		if (!itemInserted && res.length < 10) {
+			res.push(this.moves);
+			res.sort();
+		}
+
+		localStorage.setItem('results', JSON.stringify(res));
+
 
 	}
 
@@ -587,9 +629,11 @@ class Table {
 const DIVTABLE = document.getElementById("DIVtable");
 const DIVREGRAS = document.getElementById("DIVregras");
 const DIVLOGIN = document.getElementById("DIVlogin");
+const DIVRESULTS = document.getElementById("DIVresultados");
 
 
 var rankingData = "";
+var resultsData = [];
 
 // method called when the Ranking button is pressed
 document.getElementById("Ranking").onclick = function () {
@@ -707,18 +751,105 @@ document.getElementById("Ranking").onclick = function () {
 	if (DIVTABLE.style.display === "block") {
 
 		DIVTABLE.style.display = "none";
-	} else {
+	} 	else {
 
 		DIVREGRAS.style.display ="none";
+		DIVRESULTS.style.display = "none";
 		DIVTABLE.style.display = "block";
 	}
 
 }
 
+// function called when the results button is pressed
+document.getElementById("Resultados").onclick = function () {
+
+	const results = JSON.parse(localStorage.getItem('results'));
+
+	if (resultsData == []) {
+
+		const table = document.getElementById("resultados");
+
+		for (let elmnt in results) {
+
+			const row = document.createElement("tr");
+			table.append(row);
+
+			const rank = document.createElement("td");
+			const move = document.createElement("td");
+
+			var ranknr = parseInt(elmnt) + 1;
+			const ranktxt = document.createTextNode("#" + ranknr);
+			const movetxt = document.createTextNode("" + results[elmnt]);
+
+			row.append(rank);
+			row.append(move);
+
+			rank.append(ranktxt);
+			move.append(movetxt);
+
+		}
+
+	} else {
+		if (resultsData != results) {
+
+			const table = document.getElementById("resultados");
+
+			var children = table.childNodes;
+			var size = children.length;
+
+			for (let i = 1; i < size; i++) {
+				if (size - i == 1 || size - i == 0) continue;
+				children.item(size-i).remove();
+			}
+
+			for (let elmnt in results) {
+
+				const row = document.createElement("tr");
+				table.append(row);
+	
+				const rank = document.createElement("td");
+				const move = document.createElement("td");
+	
+				var ranknr = parseInt(elmnt) + 1;
+				const ranktxt = document.createTextNode("#" + ranknr);
+				const movetxt = document.createTextNode("" + results[elmnt]);
+	
+				row.append(rank);
+				row.append(move);
+	
+				rank.append(ranktxt);
+				move.append(movetxt);
+	
+			}
+
+		}
+	}
+
+	resultsData = results;
+
+	if (DIVLOGIN.style.display === "flex") {
+
+		return;
+	}
+
+	if (DIVRESULTS.style.display === "block") {
+
+		DIVRESULTS.style.display = "none";
+	} else {
+
+		DIVREGRAS.style.display ="none";
+		DIVTABLE.style.display = "none";
+		DIVRESULTS.style.display = "block";
+	}
+
+}
+
+
 function SummonLogin() {
 
 	DIVTABLE.style.display ="none";
 	DIVREGRAS.style.display = "none";
+	DIVRESULTS.style.display = "none";
 	DIVLOGIN.style.display = "flex";
 
 }
@@ -736,6 +867,7 @@ function hideDivRegras() {
 	} else {
 
 		DIVTABLE.style.display = "none";
+		DIVRESULTS.style.display = "none";
 		DIVREGRAS.style.display = "block";
 	}
 }

@@ -248,7 +248,8 @@ form [id="Entrar"] {
 
 /* BAIXO ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 #DIVtable,
-#DIVregras {
+#DIVregras,
+#DIVresultados {
     box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.332);
     background: rgb(146, 163, 199);
     padding: 1.5rem;
