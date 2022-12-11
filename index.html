@@ -50,6 +50,11 @@
 						<option value="pl">Player</option>
 						<option value="cu">Computer</option>
 					</select>
+
+					<select id="Online" class="not-clickable" name="online">
+						<option value="pvp">PVP</option>
+						<option value="PVE">PVE</option>
+					</select>
 	
 	
 					<label id="colsName" for="cols">Columns:</label>
@@ -60,7 +65,7 @@
 					<input class="button" type="button" value="Create" id="createbutton">
 
 					
-					<button class="button" id="quit">Desistir do jogo</button>
+					<button class="button" type="button" id="quit">Desistir do jogo</button>
 				</form>
 				
 			</div>
@@ -76,9 +81,11 @@
 			<div id="controls" class="footer">
 				<h2 class="inline">Controls:</h2>
 		
-				<button class="button inline" onclick="hideDivTabela()">Resultados</button>
+				<button id="Ranking" class="button inline">Ranking</button>
 		
 				<button class="button inline" onclick="hideDivRegras()">Regras</button>
+
+				<button id="Resultados" class="button inline">Resultados</button>
 			</div>
 		</div>
 
@@ -92,38 +99,8 @@
 				<tr>
 					<th>Ranking</th>
 					<th>Jogador</th>
-					<th>Adversário</th>
-					<th>Resultado</th>
-				</tr>
-				<tr>
-					<td>#1</td>
-					<td>Galaxy</td>
-					<td>IA</td>
-					<td>480</td>
-				</tr>
-				<tr>
-					<td>#2</td>
-					<td>Douglas</td>
-					<td>IA</td>
-					<td>330</td>
-				</tr>
-				<tr>
-					<td>#3</td>
-					<td>Exemplo 3</td>
-					<td>IA</td>
-					<td>290</td>
-				</tr>
-				<tr>
-					<td>#4</td>
-					<td>Exemplo 4</td>
-					<td>IA</td>
-					<td>220</td>
-				</tr>
-				<tr>
-					<td>#5</td>
-					<td>Exemplo 5</td>
-					<td>IA</td>
-					<td>180</td>
+					<th>Vitórias</th>
+					<th>Jogos</th>
 				</tr>
 			</table>
 		</div>
@@ -136,6 +113,14 @@
 				remover o último objeto.</P>
 		</div>
 
+		<div id="DIVresultados" class="DIVcenter">
+			<table id="resultados">
+				<tr>
+					<th>Ranking</th>
+					<th>Jogadas</th>
+				</tr>
+			</table>
+		</div>
 
 		
 	</main>
