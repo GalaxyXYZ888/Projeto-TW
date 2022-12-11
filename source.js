@@ -149,9 +149,6 @@ class Table {
 
 
 	}
-<<<<<<< HEAD
-   
-=======
 
 	// method to update the game, specially the board
 	updateGame(game) {
@@ -282,7 +279,6 @@ class Table {
 	}
 
 	// method to build the table
->>>>>>> 2b1351a1db07d5b83e83ccd10ae0df2946204bb7
 	buildTable() {
 
 
