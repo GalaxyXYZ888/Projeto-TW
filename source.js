@@ -125,9 +125,16 @@ class Table {
 	    this.firstPlayer = firstPlayer;                      // firstPlayer, if true it's the player, if false it's the computer
 		this.dif = dif;                                      // Lvl of difficulty, if =1 it's the easy verion, if =2 it's the hard version
 		this.pvp = pvp;                                      // If true, the player will play against another player online
-		this.turn = true;                                    // In an online context, its our turn to play if this boolean is true
+		
 		this.moves = 0;                                      // Number of moves a player made
 		
+		this.turn = true;                                    // Who's turn is it to play
+
+		if (!this.pvp) {
+			if (this.firstPlayer) this.turn = true;
+			else this.turn = false;
+		}
+
 		this.gameId = "";									 // The id of an online game
 
 		this.posAI = 0;										 // This variable will be the position the computer plays (if lvl of diff = 2)
@@ -200,6 +207,7 @@ class Table {
 				}
 				this.buildTable();
 				this.updateTimer();
+				this.turnToPlay();
 			}
 
 			// Case in which there has been a move, but the game is not finished
@@ -215,6 +223,7 @@ class Table {
 				// calling another method to process the move
 				this.processMove(rack);
 				this.updateTimer();
+				this.turnToPlay();
 
 			}
 
@@ -243,6 +252,17 @@ class Table {
 
 			}
 		}
+	}
+
+	turnToPlay() {
+
+		if (this.turn) {
+
+		} else {
+
+		}
+
+
 	}
 
 	// method called ot update the timer
@@ -388,6 +408,7 @@ class Table {
 	// plays the next move of the computer
 	nextPlay(pos) {
 
+		if (!this.pvp) this.turn = true;
 
 		// pick is the variable that will contain the chosen postion to play
 		let pick = 0;
@@ -467,6 +488,9 @@ class Table {
 
 	// plays the move of the player
 	play(pos) {
+
+		if (!this.pvp) this.turn = false;
+		
 
 		// Increasing the number of moves a player made by 1
 		this.moves++;
@@ -582,7 +606,7 @@ class Table {
 
 		console.log(this.moves);
 
-		if (localStorage.getItem('results') == "null") {
+		if (localStorage.getItem('results') == null) {
 
 			let obj = [this.moves];
 		
