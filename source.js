@@ -20,8 +20,11 @@ document.getElementById("Entrar").onclick = function () {
 	xhr.open('POST', 'http://twserver.alunos.dcc.fc.up.pt:8008/register', true);
 	xhr.onreadystatechange = () => {
 		if (xhr.readyState < 4) return;
-		if (xhr.status == 400) {
+		if (xhr.status == 200) {
 
+			// deleting the button that pops up the login window
+			const BUTTONLOGIN = document.getElementById("buttonLogin");
+			BUTTONLOGIN.style.display ="none";
 		}
 	}
 
@@ -718,9 +721,6 @@ function SummonLogin() {
 	DIVREGRAS.style.display = "none";
 	DIVLOGIN.style.display = "flex";
 
-	const BUTTONLOGIN = document.getElementById("buttonLogin");
-
-	BUTTONLOGIN.style.display ="none";
 }
 
 function hideDivRegras() {
