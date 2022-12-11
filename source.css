@@ -20,10 +20,7 @@ body {
 }
 
 .container div {
-    /*
-    padding: 10px;
-    border: 1px solid black;
-    */
+
 }
 
 .header {
@@ -46,12 +43,8 @@ body {
 }
 
 .footer {
-    grid-column: 1 / span 3;
-    /*
-    position: absolute;
-    left: 20px;
-    bottom: 25px;
-    */
+    display: inline;
+    position: relative
 }
 
 /*////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
@@ -64,7 +57,7 @@ body {
 
 /* BUTTONS */
 .button,
-.not-clicable {
+.not-clickable {
     background-color: rgb(146, 163, 199);
     font-family: 'Source Sans Pro', sans-serif;
     color: rgb(0, 0, 0);
@@ -88,7 +81,8 @@ body {
 
 .button:hover,
 .dificuldade:hover,
-.whoStarts:hover {
+.whoStarts:hover,
+.Online:hover {
     background-color: rgb(120, 133, 161);
 }
 
@@ -109,8 +103,8 @@ body {
     box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.332);
     font-family: 'Source Sans Pro', sans-serif;
     overflow: hidden;
-    width: 355px;
-    height: 230px;
+    width: 456px;
+    height: 318px;
     padding: 35px;
     border-radius: 15px;
     z-index: 4;
@@ -171,10 +165,6 @@ form [id="Entrar"] {
     font-size: 35px;
 }
 
-#boardsize {
-    grid-row: 2 / 4;
-    grid-column: 1 / 2;
-}
 
 .dificuldade {
     /*
@@ -199,10 +189,6 @@ form [id="Entrar"] {
     font-size: 28px;
 }
 
-#colsName,
-#rowsName {
-    font-size: 18px;
-}
 
 .cols_rows {
     /*
@@ -212,12 +198,6 @@ form [id="Entrar"] {
     */
 }
 
-#boardContainer {
-    display: grid;
-
-    grid-row: 1 / 4;
-    grid-column: 1 / 3;
-}
 
 /* MEIO */
 .DIVcenter {
@@ -230,12 +210,6 @@ form [id="Entrar"] {
     */
 }
 
-#board {
-    max-width: 100%;
-    font-size: 40px;
-    grid-row: 1 / 4;
-    grid-column: 1 / 3;
-}
 
 #buttonFF {
     /*
@@ -290,4 +264,10 @@ th {
 
 .inline {
     display: inline;
+}
+
+.controls{
+    position: absolute;
+    bottom: -10px;
+    height: 40px;
 }
