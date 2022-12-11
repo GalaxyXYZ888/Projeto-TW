@@ -1,0 +1,293 @@
+body {
+    background: rgb(255, 186, 96);
+}
+
+.container {
+    max-width: 100%;
+    height: 98vh;
+
+    font-family: 'Quicksand', sans-serif;
+    font-weight: bold;
+    font-size: 20px;
+
+    display: grid;
+    grid-template: 200px 1fr 80px / 1fr 1fr 1fr;
+    gap: 10px;
+
+    padding: 10px;
+    box-sizing: border-box;
+    
+}
+
+.container div {
+    /*
+    padding: 10px;
+    border: 1px solid black;
+    */
+}
+
+.header {
+
+    grid-column: 1 / 4;
+}
+
+.content-large {
+    display: grid;
+
+    grid-row: 2 / 3;
+    grid-column: 1 / 2;
+}
+
+.content-small {
+    display: grid;
+
+    grid-row: 2 / 3;
+    grid-column: 2 / 4;
+}
+
+.footer {
+    grid-column: 1 / span 3;
+    /*
+    position: absolute;
+    left: 20px;
+    bottom: 25px;
+    */
+}
+
+/*////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
+
+.title {
+    text-align: center;
+    margin: auto;
+    pointer-events: none;
+}
+
+/* BUTTONS */
+.button,
+.not-clicable {
+    background-color: rgb(146, 163, 199);
+    font-family: 'Source Sans Pro', sans-serif;
+    color: rgb(0, 0, 0);
+    font-size: 18px;
+    padding: 3px 10px;
+    box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.332);
+    display: block;
+    border-radius: 5px;
+    white-space: normal;
+ 
+    border: none;
+    outline: 0;
+    user-select: none;
+    overflow: hidden;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    box-sizing: border-box;
+    line-height: 1.5;
+}
+
+.button:hover,
+.dificuldade:hover,
+.whoStarts:hover {
+    background-color: rgb(120, 133, 161);
+}
+
+.button:active,
+.Entrar:active {
+    background-color: rgb(120, 133, 161);
+    box-shadow: 0 3px rgba(0, 0, 0, 0.332);
+    transform: translateY(2px);
+}
+
+/* LOGIN ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
+.login {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    
+    background-color: rgb(146, 163, 199);
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.332);
+    font-family: 'Source Sans Pro', sans-serif;
+    overflow: hidden;
+    width: 355px;
+    height: 230px;
+    padding: 35px;
+    border-radius: 15px;
+    z-index: 4;
+}
+
+.area-login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.login input {
+    margin-top: 10px;
+    background-color: rgb(120, 133, 161);
+    height: 45px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    color: #000000;
+    padding-left: 10px;
+}
+
+.login img {
+    width: 150px;
+    height: auto;
+    pointer-events: none;
+}
+
+.input::placeholder {
+    color: #000000;
+    font-size: 14px;
+}
+
+form [id="Entrar"] {
+    display: block;
+    background: rgb(255, 186, 96);
+    font-size: 20px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.332);
+}
+
+
+.Entrar:hover {
+    background-color: rgb(222, 162, 83);
+}
+
+/* GAME CONFIGURATOR ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
+#gameconfigurationName {
+    font-size: 35px;
+}
+
+#boardsize {
+    grid-row: 2 / 4;
+    grid-column: 1 / 2;
+}
+
+.dificuldade {
+    /*
+    position: relative;
+    float: right;
+    margin-top: 25px;
+    margin-right: 1620px;
+    */
+}
+
+
+.whoStarts {
+    /*
+    position: relative;
+    margin-top: -33px;
+    margin-right: 1486px;
+    float: right;
+    */
+}
+
+#boardSizeName {
+    font-size: 28px;
+}
+
+#colsName,
+#rowsName {
+    font-size: 18px;
+}
+
+.cols_rows {
+    /*
+    width: 10em;
+    line-height: 1.0;
+    padding: 2px 8px;
+    */
+}
+
+#boardContainer {
+    display: grid;
+
+    grid-row: 1 / 4;
+    grid-column: 1 / 3;
+}
+
+/* MEIO */
+.DIVcenter {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    overflow: auto;
+    /* resize: both; 
+    */
+}
+
+#board {
+    max-width: 100%;
+    font-size: 40px;
+    grid-row: 1 / 4;
+    grid-column: 1 / 3;
+}
+
+#buttonFF {
+    /*
+    position: relative;
+    left: 400px;
+    top: 350px;
+    */
+}
+
+
+/* BAIXO ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
+#DIVtable,
+#DIVregras,
+#DIVresultados {
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.332);
+    background: rgb(146, 163, 199);
+    padding: 1.5rem;
+    display: none;
+    border-radius: 15px;
+    position: fixed;
+    z-index: 3;
+}
+
+table,
+th,
+td {
+    border: 0.15em solid;
+    font-size: x-large;
+}
+
+th,
+td {
+    padding: 0.2em;
+}
+
+tr:hover {
+    background-color: rgb(120, 133, 161);
+
+}
+
+th {
+    background-color: rgb(120, 133, 161);
+
+}
+
+
+#regras {
+    font-size: x-large;
+    text-align: center;
+    text-justify: auto;
+}
+
+.inline {
+    display: inline;
+}
