@@ -34,38 +34,38 @@
 		</div>
 
         <div class="content-large">
-			<div id="boardSize">
+			<div class="boardConfigurationDIV">
 
-				<h1 id="gameconfigurationName">Game Configuration</h1>
-				<h2 id="boardSizeName">Board Size</h2>
+				<h1 class="gameconfigurationName">Game Configuration</h1>
 
-				<form>
-					<select id="dificuldadeButton" class="not-clicable dificuldade" name="dificuldadeButton">
+				<form class="form">
+					<select id="dificuldadeButton" class="not-clickable dificuldade inline" name="dificuldadeButton">
 						<option value="pl">Fácil</option>
 						<option value="cu">Médio</option>
 						<option value="cu">Difícil</option>
 					</select>
 	
-					<select id="whoStartsButton" class="not-clicable whoStarts" name="whoStartsButton">
+					<select id="whoStartsButton" class="not-clickable whoStarts inline" name="whoStartsButton">
 						<option value="pl">Player</option>
 						<option value="cu">Computer</option>
 					</select>
 
-					<select id="Online" class="not-clickable" name="online">
+					<select id="Online" class="not-clickable Online inline" name="online">
 						<option value="pvp">PVP</option>
 						<option value="PVE">PVE</option>
 					</select>
-	
-	
-					<label id="colsName" for="cols">Columns:</label>
-					<input class="not-clicable cols_rows" id="cols" name="cols" type="range" min="1" max="10">
-	
-	
+
 					<br>
-					<input class="button" type="button" value="Create" id="createbutton">
+					
+	
+					<label id="BoardSize-label" for="cols">Board Size:</label>
+					<input class="not-clickable cols_rows" id="cols" name="cols" type="range" min="1" max="9">
+
+					<br>
+					<input class="button inline" type="button" value="Create" id="createbutton">
 
 					
-					<button class="button" type="button" id="quit">Desistir do jogo</button>
+					<button class="button inline" type="button" id="quit">Desistir do jogo</button>
 				</form>
 				
 			</div>
@@ -78,14 +78,14 @@
 		</div>
 
         <div class="footer">
-			<div id="controls" class="footer">
+			<div id="controls" class="controls">
 				<h2 class="inline">Controls:</h2>
 		
 				<button id="Ranking" class="button inline">Ranking</button>
 		
-				<button class="button inline" onclick="hideDivRegras()">Regras</button>
-
 				<button id="Resultados" class="button inline">Resultados</button>
+
+				<button class="button inline" onclick="hideDivRegras()">Regras</button>
 			</div>
 		</div>
 

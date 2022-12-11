@@ -582,7 +582,7 @@ class Table {
 
 		console.log(this.moves);
 
-		if (localStorage.getItem('results') == "null") {
+		if (localStorage.getItem('results') == null) {
 
 			let obj = [this.moves];
 		
