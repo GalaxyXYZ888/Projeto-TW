@@ -24,7 +24,7 @@ body {
 }
 
 .header {
-
+ 
     grid-column: 1 / 4;
 }
 
@@ -104,7 +104,7 @@ body {
     font-family: 'Source Sans Pro', sans-serif;
     overflow: hidden;
     width: 456px;
-    height: 318px;
+    height: 240px;
     padding: 35px;
     border-radius: 15px;
     z-index: 4;
@@ -160,11 +160,24 @@ form [id="Entrar"] {
     background-color: rgb(222, 162, 83);
 }
 
+
+#loginLabel {
+    font-weight: bold;
+    font-size: x-large;
+    position: relative;
+    top: 80px;
+}
+
+#buttonLogin {
+    position: relative;
+    top: 80px;
+}
+
 /* GAME CONFIGURATOR ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 
 .boardConfigurationDIV {
-  
     position: relative;
+    top: 60px;
 }
 
 .gameconfigurationName {
@@ -211,9 +224,7 @@ form [id="Entrar"] {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    overflow:auto
-    
-    
+    overflow: auto;
 }
 
 

@@ -960,3 +960,4 @@ function hideDivRegras() {
 		DIVREGRAS.style.display = "block";
 	}
 }
+

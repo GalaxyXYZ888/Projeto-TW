@@ -16,14 +16,14 @@
 
 			<h1 class="title"> <img src="NIMLogo2.png" alt="NIM"> </h1>
 
-			<button id="buttonLogin" class="button" onclick="SummonLogin()">Login</button>
+			<label id="loginLabel" class="inline" for="buttonLogin">Login into your account:</label>
+			<button id="buttonLogin" class="button inline" onclick="SummonLogin()">Login</button>
 			
 			<section class="area-login">
 				<div id="DIVlogin" class="login DIVcenter">
 					<div>
 						<img src="NIMLogo2.png">
 					</div>
-
 					<form method="POST">
 						<input id="loginB" type="text" name="nome" placeholder="nome de usuario" autofocus>
 						<input id="passwordB" type="password" name="pass" placeholder="password">
@@ -57,7 +57,6 @@
 
 					<br>
 					
-	
 					<label id="BoardSize-label" for="cols">Board Size:</label>
 					<input class="not-clickable cols_rows" id="cols" name="cols" type="range" min="1" max="9">
 
